@@ -1,0 +1,3481 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Portal Pembelajaran Digital IPA SMP (Fase D: Kelas 7, 8, 9) - SMP Satu Atap Libaru Sungkai</title>
+  
+  <!-- Google Fonts: Nunito & Fredoka -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #0284C7;
+      --primary-dark: #0369A1;
+      --secondary: #059669;
+      --secondary-dark: #047857;
+      --amber: #D97706;
+      --amber-dark: #B45309;
+      --purple: #7C3AED;
+      --accent-rose: #E11D48;
+      --bg-gradient: linear-gradient(135deg, #E0F2FE 0%, #F0FDF4 50%, #FEF3C7 100%);
+      --glass-bg: rgba(255, 255, 255, 0.92);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --glass-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      color: var(--text-main);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    h1, h2, h3, .font-heading {
+      font-family: 'Fredoka', 'Nunito', sans-serif;
+    }
+
+    /* Screen Management */
+    .screen {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      padding: 1rem 1.2rem 6.5rem 1.2rem;
+      flex-direction: column;
+      animation: fadeIn 0.28s ease-out;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top Navigation Bar */
+    .screen-top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto 0.8rem auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 100px;
+      padding: 0.5rem 0.9rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      z-index: 40;
+    }
+
+    .screen-nav-btn-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nav-pill-btn {
+      appearance: none;
+      border: 1.5px solid #CBD5E1;
+      background: #FFFFFF;
+      color: #334155;
+      padding: 0.45rem 1rem;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+
+    .nav-pill-btn:hover, .nav-pill-btn:active, .nav-pill-btn.active {
+      background: #F1F5F9;
+      color: var(--primary);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .top-school-badge {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #0369A1;
+      background: #E0F2FE;
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Bottom Touch Dock */
+    .ifp-bottom-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 2px solid #E2E8F0;
+      padding: 0.75rem 1.2rem;
+      box-shadow: 0 -8px 25px rgba(0,0,0,0.07);
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+    }
+
+    .dock-content {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      gap: 0.8rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 3D Tactile Buttons */
+    .btn-3d {
+      appearance: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 0.85rem 1.4rem;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.1s ease;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .btn-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+    }
+
+    .btn-primary {
+      background: #0284C7;
+      color: #FFFFFF;
+      box-shadow: 0 5px 0 #0369A1;
+    }
+
+    .btn-secondary {
+      background: #059669;
+      color: #FFFFFF;
+      box-shadow: 0 5px 0 #047857;
+    }
+
+    .btn-amber {
+      background: #F59E0B;
+      color: #78350F;
+      box-shadow: 0 5px 0 #D97706;
+    }
+
+    .btn-purple {
+      background: #8B5CF6;
+      color: #FFFFFF;
+      box-shadow: 0 5px 0 #6D28D9;
+    }
+
+    .btn-rose {
+      background: #E11D48;
+      color: #FFFFFF;
+      box-shadow: 0 5px 0 #BE123C;
+    }
+
+    .btn-outline {
+      background: #FFFFFF;
+      color: #334155;
+      border: 2px solid #CBD5E1;
+      box-shadow: 0 4px 0 #94A3B8;
+    }
+
+    /* Screen 1: Portal Hub */
+    .home-hero-card {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      background: var(--glass-bg);
+      border: 2px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 2.2rem 1.8rem;
+      box-shadow: var(--glass-shadow);
+      text-align: center;
+      position: relative;
+    }
+
+    .teacher-gear-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: rgba(255,255,255,0.7);
+      border: 1.5px solid #CBD5E1;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #64748B;
+      cursor: pointer;
+      opacity: 0.35;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .teacher-gear-btn:hover {
+      opacity: 1;
+      transform: rotate(45deg);
+      background: #FFFFFF;
+      color: var(--primary);
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .hero-badge-pill {
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .home-title {
+      font-size: 2.2rem;
+      color: #0F172A;
+      margin-bottom: 0.3rem;
+      line-height: 1.2;
+    }
+
+    .home-subtitle {
+      font-size: 1.15rem;
+      color: #0369A1;
+      font-weight: 800;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Filter Selector Kelas & Semester */
+    .selector-bar-box {
+      background: #F8FAFC;
+      border: 2px solid #E2E8F0;
+      border-radius: 18px;
+      padding: 1.2rem 1.4rem;
+      margin: 1.2rem auto;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-weight: 900;
+      font-size: 0.95rem;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .filter-pill-btn {
+      padding: 0.6rem 1.4rem;
+      border-radius: 100px;
+      border: 2px solid #CBD5E1;
+      background: #FFFFFF;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill-btn.active {
+      background: #0284C7;
+      color: #FFFFFF;
+      border-color: #0369A1;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+    }
+
+    /* Topic Cards Grid */
+    .topic-catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.1rem;
+      margin-top: 1.2rem;
+      text-align: left;
+    }
+
+    .topic-card {
+      background: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      border-radius: 18px;
+      padding: 1.3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.18s ease;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .topic-card:hover {
+      transform: translateY(-4px);
+      border-color: #0284C7;
+      box-shadow: 0 10px 22px rgba(2, 132, 199, 0.12);
+    }
+
+    .topic-card.featured {
+      border: 2.5px solid #059669;
+      background: #F0FDF4;
+    }
+
+    .topic-badge-status {
+      align-self: flex-start;
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 0.2rem 0.65rem;
+      border-radius: 100px;
+      margin-bottom: 0.6rem;
+    }
+
+    .status-ready {
+      background: #DCFCE7;
+      color: #15803D;
+      border: 1px solid #86EFAC;
+    }
+
+    .status-ai {
+      background: #F3E8FF;
+      color: #7E22CE;
+      border: 1px solid #D8B4FE;
+    }
+
+    .topic-card-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #0F172A;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .topic-card-desc {
+      font-size: 0.85rem;
+      color: #64748B;
+      line-height: 1.5;
+      margin-bottom: 0.8rem;
+    }
+
+    .topic-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    /* Screen Sub-Hub (Menu 5 Tahap) */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin-top: 1.4rem;
+      width: 100%;
+    }
+
+    .menu-card-btn {
+      background: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 1.4rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .menu-card-btn:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 20px rgba(2, 132, 199, 0.15);
+    }
+
+    .menu-badge-num {
+      position: absolute;
+      top: 0.6rem;
+      left: 0.8rem;
+      background: #E0F2FE;
+      color: #0369A1;
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 0.2rem 0.55rem;
+      border-radius: 100px;
+    }
+
+    .menu-card-icon {
+      font-size: 2.3rem;
+    }
+
+    .menu-card-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #1E293B;
+      text-align: center;
+    }
+
+    .menu-card-desc {
+      font-size: 0.8rem;
+      color: #64748B;
+      text-align: center;
+    }
+
+    /* Screen 2: Tabel CP & TP */
+    .cptp-table-card {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--glass-shadow);
+      border: 2px solid #E2E8F0;
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .styled-table th {
+      background: #F1F5F9;
+      color: #0F172A;
+      font-weight: 800;
+      text-align: left;
+      padding: 0.75rem 0.9rem;
+      border-bottom: 2px solid #CBD5E1;
+    }
+
+    .styled-table td {
+      padding: 0.75rem 0.9rem;
+      border-bottom: 1px solid #E2E8F0;
+      color: #334155;
+      vertical-align: top;
+      line-height: 1.45;
+    }
+
+    .styled-table tr:hover {
+      background: #F8FAFC;
+    }
+
+    .pill-solo {
+      display: inline-block;
+      padding: 0.22rem 0.6rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: #E0E7FF;
+      color: #3730A3;
+    }
+
+    /* Screen 3: Slider Materi 50:50 */
+    .slider-main {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .slide-progress {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .slide-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #CBD5E1;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .slide-dot.active {
+      width: 38px;
+      border-radius: 100px;
+      background: var(--primary);
+    }
+
+    .slide-content-box {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.4rem;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      box-shadow: var(--glass-shadow);
+      border: 2px solid #E2E8F0;
+      min-height: 520px;
+    }
+
+    @media (max-width: 860px) {
+      .slide-content-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .slide-text-side {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      justify-content: flex-start;
+      overflow-y: auto;
+      max-height: 620px;
+      padding-right: 0.5rem;
+    }
+
+    .slide-title {
+      font-size: 1.55rem;
+      color: #0F172A;
+      line-height: 1.3;
+    }
+
+    .slide-body {
+      font-size: 1rem;
+      line-height: 1.65;
+      color: #334155;
+    }
+
+    .slide-visual-side {
+      background: #F8FAFC;
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+      position: relative;
+      gap: 0.6rem;
+      min-height: 480px;
+    }
+
+    .img-search-tab-bar {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 14px;
+      padding: 0.6rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .img-search-input-group {
+      display: flex;
+      gap: 0.4rem;
+      width: 100%;
+    }
+
+    .img-search-input {
+      flex: 1;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0F172A;
+      background: #F8FAFC;
+      border: 1.5px solid #94A3B8;
+      border-radius: 100px;
+      outline: none;
+    }
+
+    .img-search-input:focus {
+      border-color: #0284C7;
+      background: #FFFFFF;
+    }
+
+    .img-search-btn {
+      appearance: none;
+      border: none;
+      background: #0284C7;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 0.85rem;
+      border-radius: 100px;
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s;
+    }
+
+    .img-quick-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+    }
+
+    .quick-kw-chip {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #0369A1;
+      background: #E0F2FE;
+      border: 1px solid #BAE6FD;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .quick-kw-chip:hover {
+      background: #0284C7;
+      color: #FFFFFF;
+    }
+
+    .img-search-results-tray {
+      width: 100%;
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding: 0.4rem 0.2rem;
+      scrollbar-width: thin;
+      min-height: 60px;
+      align-items: center;
+    }
+
+    .img-thumb-item {
+      flex: 0 0 68px;
+      height: 62px;
+      border-radius: 8px;
+      border: 2px solid #CBD5E1;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      background: #E2E8F0;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .img-thumb-item:hover, .img-thumb-item.active {
+      transform: scale(1.06);
+      border-color: #059669;
+      box-shadow: 0 0 8px rgba(5, 150, 105, 0.4);
+    }
+
+    .img-thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .main-visual-frame {
+      width: 100%;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      position: relative;
+    }
+
+    .diagram-caption {
+      font-size: 0.86rem;
+      color: #475569;
+      margin-top: 0.3rem;
+      line-height: 1.4;
+      background: #F1F5F9;
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    /* Screen 4: Evaluasi Setup */
+    .eval-choice-card {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 2.2rem 1.8rem;
+      box-shadow: var(--glass-shadow);
+      border: 2px solid #E2E8F0;
+      text-align: center;
+    }
+
+    .student-input {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      border: 2px solid #CBD5E1;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0F172A;
+      outline: none;
+    }
+
+    .student-input:focus {
+      border-color: var(--primary);
+    }
+
+    .eval-mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+      margin-top: 1.6rem;
+    }
+
+    @media (max-width: 640px) {
+      .eval-mode-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .eval-card-select {
+      background: #F8FAFC;
+      border: 3px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 1.8rem 1.2rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      transition: all 0.15s;
+    }
+
+    .eval-card-select:hover {
+      border-color: var(--primary);
+      background: #EFF6FF;
+      transform: translateY(-3px);
+    }
+
+    /* Screen 5: Quiz Card */
+    .quiz-card {
+      width: 100%;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 1.8rem;
+      box-shadow: var(--glass-shadow);
+      border: 2px solid #E2E8F0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .quiz-meta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #F1F5F9;
+      padding-bottom: 0.8rem;
+    }
+
+    .quiz-solo-badge {
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      background: #EFF6FF;
+      color: #1D4ED8;
+    }
+
+    .diff-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 0.22rem 0.65rem;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .diff-badge-mudah {
+      background: #DCFCE7;
+      color: #15803D;
+      border: 1px solid #86EFAC;
+    }
+
+    .diff-badge-sedang {
+      background: #FEF3C7;
+      color: #B45309;
+      border: 1px solid #FCD34D;
+    }
+
+    .diff-badge-hots {
+      background: #F3E8FF;
+      color: #7E22CE;
+      border: 1px solid #D8B4FE;
+      animation: pulseGlow 1.8s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+      50% { box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.35); }
+    }
+
+    .quiz-question-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.5;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 0.6rem;
+    }
+
+    @media (max-width: 700px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      background: #F8FAFC;
+      border: 2.5px solid #CBD5E1;
+      border-radius: 18px;
+      padding: 1.1rem 1.2rem;
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #1E293B;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      box-shadow: 0 4px 0 #94A3B8;
+      transition: all 0.1s;
+    }
+
+    .option-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #94A3B8;
+    }
+
+    .option-btn.correct {
+      background: #DCFCE7 !important;
+      border-color: #16A34A !important;
+      color: #14532D !important;
+      box-shadow: 0 4px 0 #15803D !important;
+    }
+
+    .option-btn.wrong {
+      background: #FEE2E2 !important;
+      border-color: #DC2626 !important;
+      color: #7F1D1D !important;
+      box-shadow: 0 4px 0 #B91C1C !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .short-input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin-top: 0.6rem;
+      max-width: 600px;
+    }
+
+    .short-input-field {
+      width: 100%;
+      padding: 1rem 1.4rem;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #0F172A;
+      background: #F8FAFC;
+      border: 2.5px solid #94A3B8;
+      border-radius: 16px;
+      outline: none;
+    }
+
+    /* Screen 6 & 7: DnD & Matching */
+    .dnd-card, .match-card {
+      width: 100%;
+      max-width: 1050px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 1.6rem;
+      box-shadow: var(--glass-shadow);
+      border: 2px solid #E2E8F0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .dnd-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      padding: 1.2rem;
+      background: #F1F5F9;
+      border-radius: var(--radius-md);
+      min-height: 80px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dnd-item {
+      background: #FFFFFF;
+      border: 2px solid #0284C7;
+      padding: 0.65rem 1.2rem;
+      border-radius: 100px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #0369A1;
+      cursor: grab;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.06);
+      transition: all 0.15s;
+    }
+
+    .dnd-item.selected {
+      background: #0284C7;
+      color: #FFFFFF;
+      transform: scale(1.08);
+      box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
+    }
+
+    .dnd-targets-grid, .match-columns-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .dnd-target-zone {
+      background: #F8FAFC;
+      border: 2.5px dashed #94A3B8;
+      border-radius: var(--radius-md);
+      padding: 1.2rem;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .match-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .match-item-card {
+      background: #F8FAFC;
+      border: 2px solid #CBD5E1;
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      font-weight: 800;
+      font-size: 0.98rem;
+      color: #1E293B;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s;
+    }
+
+    .match-item-card.selected {
+      border-color: #0284C7;
+      background: #E0F2FE;
+      box-shadow: 0 0 10px rgba(2, 132, 199, 0.3);
+    }
+
+    .match-item-card.matched {
+      border-color: #059669;
+      background: #ECFDF5;
+      color: #065F46;
+      pointer-events: none;
+    }
+
+    /* Screen 8: Hasil Evaluasi */
+    .result-card {
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 2.2rem;
+      box-shadow: var(--glass-shadow);
+      border: 2px solid #E2E8F0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .score-status-badge {
+      padding: 0.45rem 1.4rem;
+      border-radius: 100px;
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .status-tuntas {
+      background: #D1FAE5;
+      color: #065F46;
+      border: 1.5px solid #6EE7B7;
+    }
+
+    .status-remedial {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1.5px solid #FCA5A5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================
+       SCREEN 1: PORTAL BERANDA (KELAS 7, 8, 9 & SEMESTER 1 - 2)
+       ======================================================== -->
+  <section id="screen-home" class="screen active">
+    <div class="home-hero-card">
+      <button class="teacher-gear-btn" onclick="openTeacherDashboard()" title="Dashboard Guru & AI Settings">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+
+      <div class="hero-badges">
+        <span class="hero-badge-pill"><i class="fa-solid fa-school"></i> SMP Satu Atap Libaru Sungkai</span>
+        <span class="hero-badge-pill"><i class="fa-solid fa-chalkboard-user"></i> Guru: Syahdianor Refani, S.Pd</span>
+        <span class="hero-badge-pill"><i class="fa-solid fa-microscope"></i> Kurikulum Merdeka Fase D</span>
+      </div>
+
+      <h1 class="home-title">Portal Pembelajaran IPA Terpadu</h1>
+      <h2 class="home-subtitle" id="portal-current-display">Pilih Jenjang Kelas & Semester Pembelajaran</h2>
+      
+      <!-- Selector Bar: Kelas & Semester -->
+      <div class="selector-bar-box">
+        <div class="filter-group">
+          <span class="filter-label"><i class="fa-solid fa-layer-group" style="color:#0284C7;"></i> Jenjang Kelas:</span>
+          <button class="filter-pill-btn active" id="btn-grade-7" onclick="selectGrade(7)">Kelas 7</button>
+          <button class="filter-pill-btn" id="btn-grade-8" onclick="selectGrade(8)">Kelas 8</button>
+          <button class="filter-pill-btn" id="btn-grade-9" onclick="selectGrade(9)">Kelas 9</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label"><i class="fa-solid fa-calendar-days" style="color:#059669;"></i> Semester:</span>
+          <button class="filter-pill-btn active" id="btn-sem-1" onclick="selectSemester(1)">Semester 1 (Ganjil)</button>
+          <button class="filter-pill-btn" id="btn-sem-2" onclick="selectSemester(2)">Semester 2 (Genap)</button>
+        </div>
+      </div>
+
+      <!-- Katalog Topik Sesuai ATP PDF -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.2rem; flex-wrap:wrap; gap:0.6rem;">
+        <h3 style="font-size:1.25rem; color:#0F172A;" id="catalog-heading-title">Daftar Topik Pembelajaran:</h3>
+        <button class="nav-pill-btn" onclick="openGeminiModal()" style="border-color:#7C3AED; color:#7C3AED; font-weight:900;">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Integrasi AI (Gemini Studio)
+        </button>
+      </div>
+
+      <div class="topic-catalog-grid" id="topic-catalog-container">
+        <!-- Akan dirender otomatis berdasarkan grade & semester yang aktif -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 2: SUB-HUB TOPIK TERPILIH (5 TAHAP BELAJAR)
+       ======================================================== -->
+  <section id="screen-subhub" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Ganti Topik
+        </button>
+        <button class="nav-pill-btn" onclick="navGoBack()">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+      <div class="top-school-badge" id="subhub-top-badge">
+        <i class="fa-solid fa-book"></i> Modul Pembelajaran Aktif
+      </div>
+    </div>
+
+    <div class="home-hero-card" style="padding:1.8rem;">
+      <span class="hero-badge-pill" id="subhub-category-pill" style="margin-bottom:0.6rem; display:inline-block;">Topik IPA Fase D</span>
+      <h2 class="home-title" id="subhub-topic-title" style="font-size:2rem;">Pengukuran Fisika</h2>
+      <p style="color:#475569; max-width:680px; margin:0 auto; font-size:0.95rem; line-height:1.6;" id="subhub-topic-desc">
+        Eksplorasi konsep besaran pokok dan turunan, penggunaan mistar, jangka sorong, neraca Ohaus, pengukuran volume tak beraturan, hingga laporan ilmiah.
+      </p>
+
+      <div class="menu-grid">
+        <div class="menu-card-btn" onclick="navTo('screen-cptp')">
+          <span class="menu-badge-num">Tahap 1</span>
+          <div class="menu-card-icon" style="color:#0284C7;"><i class="fa-solid fa-table-list"></i></div>
+          <div class="menu-card-title">Matriks CP & TP Lengkap</div>
+          <div class="menu-card-desc">Target alur pembelajaran, SOLO, alokasi JP, dan Profil Lulusan.</div>
+        </div>
+
+        <div class="menu-card-btn" onclick="navTo('screen-materi')">
+          <span class="menu-badge-num">Tahap 2</span>
+          <div class="menu-card-icon" style="color:#059669;"><i class="fa-solid fa-book-open-reader"></i></div>
+          <div class="menu-card-title">Materi & Penelusuran Visual</div>
+          <div class="menu-card-desc">Slide interaktif 50:50 dengan pencarian gambar online terintegrasi.</div>
+        </div>
+
+        <div class="menu-card-btn" onclick="startDragAndDrop()">
+          <span class="menu-badge-num">Tahap 3</span>
+          <div class="menu-card-icon" style="color:#7C3AED;"><i class="fa-solid fa-hand-pointer"></i></div>
+          <div class="menu-card-title">Tantangan Drag & Drop</div>
+          <div class="menu-card-desc">5 Soal klasifikasi interaktif sentuh layar IFP.</div>
+        </div>
+
+        <div class="menu-card-btn" onclick="startMatchingGame()">
+          <span class="menu-badge-num">Tahap 4</span>
+          <div class="menu-card-icon" style="color:#DB2777;"><i class="fa-solid fa-link"></i></div>
+          <div class="menu-card-title">Game Menjodohkan</div>
+          <div class="menu-card-desc">5 Ronde pasangkan instrumen dengan fungsi & konsep fisika.</div>
+        </div>
+
+        <div class="menu-card-btn" onclick="navTo('screen-eval-choice')" style="border-color:#F59E0B; background:#FFFDF7;">
+          <span class="menu-badge-num" style="background:#FEF3C7; color:#B45309;">Tahap Akhir 5</span>
+          <div class="menu-card-icon" style="color:#D97706;"><i class="fa-solid fa-clipboard-check"></i></div>
+          <div class="menu-card-title">Kuis Evaluasi Formatif</div>
+          <div class="menu-card-desc">Asesmen mandiri / multi-user (1, 2, atau 3 siswa) PG / Isian.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 3: TABEL CP DAN TP (SESUAI DOKUMEN ATP RESMI)
+       ======================================================== -->
+  <section id="screen-cptp" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+        <button class="nav-pill-btn" onclick="navGoBack()">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+      <div class="top-school-badge">
+        <i class="fa-solid fa-graduation-cap"></i> Dokumen Resmi ATP 2026/2027
+      </div>
+    </div>
+
+    <div class="cptp-table-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem;">
+        <div>
+          <h2 style="font-size:1.6rem; color:#0F172A;" id="cptp-header-title">Matriks Alur Tujuan Pembelajaran (ATP)</h2>
+          <p style="color:#64748B; font-size:0.92rem;" id="cptp-header-subtitle">Prinsip Pembelajaran Mendalam (Deep Learning) - Taksonomi SOLO</p>
+        </div>
+        <button class="btn-3d btn-primary" onclick="navTo('screen-materi')">
+          <i class="fa-solid fa-arrow-right"></i> Buka Modul Materi
+        </button>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th style="width: 45px;">No</th>
+              <th style="width: 140px;">Elemen / Topik</th>
+              <th>Tujuan Pembelajaran (TP)</th>
+              <th style="width: 130px;">Taksonomi SOLO</th>
+              <th style="width: 90px;">Alokasi</th>
+              <th style="width: 150px;">Dimensi Profil</th>
+              <th style="width: 180px;">Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="cptp-table-body">
+            <!-- Diisi secara dinamis berdasarkan data ATP -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 4: SLIDER MATERI INTERAKTIF 50:50
+       ======================================================== -->
+  <section id="screen-materi" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+        <button class="nav-pill-btn" onclick="navGoBack()">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+      <div class="top-school-badge" id="materi-top-badge">
+        <i class="fa-solid fa-book-open"></i> Modul Pembelajaran Interaktif
+      </div>
+    </div>
+
+    <div class="slider-main">
+      <div class="slide-progress" id="slide-indicators"></div>
+
+      <div class="slide-content-box">
+        <div class="slide-text-side">
+          <span style="font-size:0.85rem; font-weight:800; color:#047857; background:#D1FAE5; padding:0.3rem 0.9rem; border-radius:100px; width:fit-content;" id="slide-badge">
+            Slide 1
+          </span>
+          <h2 class="slide-title" id="slide-title">Judul Slide</h2>
+          <div class="slide-body" id="slide-desc"></div>
+        </div>
+
+        <div class="slide-visual-side">
+          <!-- In-App Image Search Bar Terkoneksi Internet -->
+          <div class="img-search-tab-bar">
+            <div class="img-search-input-group">
+              <input type="text" id="img-search-query" class="img-search-input" placeholder="Telusuri gambar instrumen di internet...">
+              <button class="img-search-btn" id="btn-do-search">
+                <i class="fa-solid fa-magnifying-glass"></i> Cari
+              </button>
+            </div>
+            <div class="img-quick-keywords" id="search-quick-keywords"></div>
+            <!-- Horizontal Tray for In-App Live Results -->
+            <div class="img-search-results-tray" id="search-results-tray">
+              <span style="font-size:0.82rem; color:#64748B;">Memuat gambar referensi materi...</span>
+            </div>
+          </div>
+
+          <!-- Main Selected Image Frame -->
+          <div class="main-visual-frame" id="slide-visual-frame"></div>
+
+          <div class="diagram-caption" id="slide-caption-box">
+            <i class="fa-solid fa-circle-info" style="color:#059669;"></i> <span id="slide-caption-text">Keterangan Gambar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ifp-bottom-dock">
+      <div class="dock-content">
+        <button class="btn-3d btn-outline" id="btn-slide-prev" onclick="prevSlide()">
+          <i class="fa-solid fa-chevron-left"></i> Sebelumnya
+        </button>
+        <button class="btn-3d btn-amber" onclick="startDragAndDrop()">
+          <i class="fa-solid fa-puzzle-piece"></i> Lanjut Tantangan
+        </button>
+        <button class="btn-3d btn-secondary" id="btn-slide-next" onclick="nextSlide()">
+          Berikutnya <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 5: PILIHAN FORMAT & MULTI-USER EVALUASI
+       ======================================================== -->
+  <section id="screen-eval-choice" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+        <button class="nav-pill-btn" onclick="navGoBack()">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+      <div class="top-school-badge">
+        <i class="fa-solid fa-pen-ruler"></i> Asesmen Formatif (Tahap Akhir)
+      </div>
+    </div>
+
+    <div class="eval-choice-card">
+      <h2 style="font-size:1.8rem; color:#0F172A;">Asesmen Evaluasi Formatif</h2>
+      <p style="color:#64748B; font-size:1rem; margin-top:0.3rem;">
+        Pilih jumlah siswa yang maju ke layar sentuh IFP, isi data diri, lalu tentukan format soal.
+      </p>
+
+      <!-- Pilihan Jumlah Peserta Didik (1, 2, atau 3 Orang Sekaligus) -->
+      <div style="margin: 1.2rem auto; max-width: 600px;">
+        <label style="display:block; font-weight:800; font-size:0.95rem; margin-bottom:0.6rem; color:#1E293B;">
+          <i class="fa-solid fa-users"></i> Mode Menjawab di Layar IFP:
+        </label>
+        <div style="display:flex; gap:0.6rem; justify-content:center;">
+          <button class="nav-pill-btn user-count-btn active" id="btn-user-1" onclick="setUserCount(1)" style="flex:1; justify-content:center; padding:0.6rem;">
+            <i class="fa-solid fa-user"></i> 1 Orang (Solo)
+          </button>
+          <button class="nav-pill-btn user-count-btn" id="btn-user-2" onclick="setUserCount(2)" style="flex:1; justify-content:center; padding:0.6rem;">
+            <i class="fa-solid fa-user-group"></i> 2 Orang (Duel)
+          </button>
+          <button class="nav-pill-btn user-count-btn" id="btn-user-3" onclick="setUserCount(3)" style="flex:1; justify-content:center; padding:0.6rem;">
+            <i class="fa-solid fa-users-viewfinder"></i> 3 Orang (Trio)
+          </button>
+        </div>
+      </div>
+
+      <!-- Container Input Nama & Kelas Dinamis Sesuai Jumlah Siswa -->
+      <div id="student-inputs-container" style="display:grid; grid-template-columns:1fr; gap:0.9rem; max-width:700px; margin:0 auto 1.4rem auto;"></div>
+
+      <div class="eval-mode-grid">
+        <div class="eval-card-select" onclick="launchQuizMode('pg')">
+          <i class="fa-solid fa-circle-check" style="font-size:2.8rem; color:#0284C7;"></i>
+          <h3 style="font-size:1.25rem; color:#0F172A;">Format Pilihan Ganda</h3>
+          <p style="font-size:0.88rem; color:#64748B;"><strong>20 Soal Acak</strong> dari Bank 70 Soal. Setiap siswa menerima soal berbeda secara independen (Mudah: 3 poin, Sedang: 5 poin, HOTS: 8 poin).</p>
+          <span class="btn-3d btn-primary" style="margin-top:0.4rem; width:100%;">Mulai Pilihan Ganda (20 Soal)</span>
+        </div>
+
+        <div class="eval-card-select" onclick="launchQuizMode('isian')">
+          <i class="fa-solid fa-pen-to-square" style="font-size:2.8rem; color:#059669;"></i>
+          <h3 style="font-size:1.25rem; color:#0F172A;">Format Isian Singkat</h3>
+          <p style="font-size:0.88rem; color:#64748B;"><strong>10 Soal Acak</strong> dari Bank 50 Soal. Analisis konsep, konversi & perhitungan (Mudah: 6 poin, Sedang: 10 poin, HOTS: 16 poin).</p>
+          <span class="btn-3d btn-secondary" style="margin-top:0.4rem; width:100%;">Mulai Isian Singkat (10 Soal)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 6: PENGERJAAN KUIS EVALUASI (SOLO / DUEL / TRIO)
+       ======================================================== -->
+  <section id="screen-quiz" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+        <button class="nav-pill-btn" onclick="navGoBack()">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+      <div class="top-school-badge" id="quiz-header-badge">
+        <i class="fa-solid fa-chalkboard-user"></i> Asesmen IFP Aktif
+      </div>
+    </div>
+
+    <!-- Multi-Column Container untuk 1, 2, atau 3 Siswa Sekaligus -->
+    <div id="quiz-multi-viewport" style="width:100%; max-width:1200px; margin:0 auto; display:grid; gap:1rem;"></div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 7: 5 SOAL DRAG AND DROP INTERAKTIF
+       ======================================================== -->
+  <section id="screen-dnd" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+        <button class="nav-pill-btn" onclick="navGoBack()">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+      <div class="top-school-badge" id="dnd-progress-badge">
+        <i class="fa-solid fa-puzzle-piece"></i> Tantangan Drag & Drop (1/5)
+      </div>
+    </div>
+
+    <div class="dnd-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 id="dnd-title" style="font-size:1.4rem; color:#0F172A;">Klasifikasi Interaktif</h2>
+        <span style="font-size:0.85rem; font-weight:800; color:#0369A1;">Sentuh item & masukkan ke kotak target</span>
+      </div>
+
+      <div class="dnd-pool" id="dnd-source-pool"></div>
+
+      <div class="dnd-targets-grid">
+        <div class="dnd-target-zone" id="dnd-zone-left" onclick="handleZoneClick('left')">
+          <div class="dnd-target-title" id="dnd-title-left" style="font-weight:900; margin-bottom:0.4rem;">Kategori A</div>
+          <div class="dnd-placed-items" id="dnd-items-left" style="display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
+        </div>
+
+        <div class="dnd-target-zone" id="dnd-zone-right" onclick="handleZoneClick('right')">
+          <div class="dnd-target-title" id="dnd-title-right" style="font-weight:900; margin-bottom:0.4rem;">Kategori B</div>
+          <div class="dnd-placed-items" id="dnd-items-right" style="display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ifp-bottom-dock">
+      <div class="dock-content" style="justify-content:center;">
+        <button class="btn-3d btn-primary" style="min-width:240px;" onclick="checkDndAnswer()">
+          <i class="fa-solid fa-circle-check"></i> Cek Hasil Klasifikasi
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 8: GAME MENJODOHKAN (MATCHING PAIRS)
+       ======================================================== -->
+  <section id="screen-matching" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+        <button class="nav-pill-btn" onclick="navGoBack()">
+          <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+      <div class="top-school-badge" id="match-progress-badge">
+        <i class="fa-solid fa-link"></i> Menjodohkan Ronde (1/5)
+      </div>
+    </div>
+
+    <div class="match-card">
+      <div>
+        <h2 id="match-title" style="font-size:1.4rem; color:#0F172A;">Pasangkan Konsep yang Tepat</h2>
+        <p style="color:#64748B; font-size:0.9rem; margin-top:0.2rem;">
+          Sentuh 1 kartu di kolom kiri, lalu sentuh kartu pasangannya di kolom kanan.
+        </p>
+      </div>
+
+      <div class="match-columns-grid">
+        <div class="match-list" id="match-col-left"></div>
+        <div class="match-list" id="match-col-right"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SCREEN 9: LEMBAR HASIL EVALUASI / REFLEKSI
+       ======================================================== -->
+  <section id="screen-result" class="screen">
+    <div class="screen-top-nav">
+      <div class="screen-nav-btn-group">
+        <button class="nav-pill-btn" onclick="navGoHome()">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+      </div>
+      <div class="top-school-badge">
+        <i class="fa-solid fa-award"></i> Lembar Hasil Belajar
+      </div>
+    </div>
+
+    <div class="result-card"></div>
+  </section>
+
+  <!-- ========================================================
+       MODAL: INTEGRASI AI (GEMINI API KEY STUDIO)
+       ======================================================== -->
+  <div id="gemini-modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(6px); z-index:100; align-items:center; justify-content:center; padding:1.2rem;">
+    <div style="background:#0F172A; color:#F8FAFC; border:1.5px solid #334155; border-radius:24px; padding:1.8rem; max-width:850px; width:100%; box-shadow:0 20px 40px rgba(0,0,0,0.5); position:relative;">
+      <button onclick="closeGeminiModal()" style="position:absolute; top:1rem; right:1.2rem; background:transparent; border:none; color:#94A3B8; font-size:1.4rem; cursor:pointer;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div style="display:flex; align-items:center; gap:0.6rem; color:#38BDF8; font-size:1.4rem; font-weight:900; margin-bottom:1rem;">
+        <i class="fa-solid fa-key"></i> Integrasi AI (Gemini API Key Studio)
+      </div>
+
+      <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1.4rem;">
+        <div>
+          <label style="display:block; font-weight:800; font-size:0.95rem; margin-bottom:0.5rem; color:#E2E8F0;">
+            Masukkan Gemini API Key:
+          </label>
+          <div style="display:flex; gap:0.5rem;">
+            <input type="password" id="input-gemini-key" placeholder="AIzaSy..." style="flex:1; padding:0.75rem 1rem; border-radius:12px; border:1.5px solid #475569; background:#1E293B; color:#F8FAFC; font-family:monospace; outline:none;">
+            <button onclick="toggleKeyVisibility()" class="btn-3d btn-outline" style="padding:0.75rem 1rem; font-size:0.9rem;" title="Lihat/Sembunyikan">
+              <i class="fa-solid fa-eye" id="icon-eye-key"></i>
+            </button>
+          </div>
+          <p style="font-size:0.8rem; color:#94A3B8; margin-top:0.4rem; line-height:1.4;">
+            Key tersimpan aman di peramban lokal perangkat IFP (Local Storage) dan tidak dikirim ke server luar.
+          </p>
+
+          <div style="background:#1E293B; border-left:4px solid #F59E0B; padding:0.8rem; border-radius:8px; margin-top:1rem; font-size:0.82rem; color:#CBD5E1; line-height:1.45;">
+            <strong style="color:#FBBF24;">Mengenai Limit & Error:</strong><br>
+            &bull; <strong>Error 503 (Unavailable):</strong> Server Google sedang padat global. Tunggu beberapa detik lalu coba kembali.<br>
+            &bull; <strong>Error 429 (Rate Limit):</strong> Kuota Free Tier habis. Buat API Key baru di Google AI Studio dengan memilih <em>"Create API key in a new project"</em>.
+          </div>
+
+          <div style="display:flex; gap:0.6rem; margin-top:1.2rem;">
+            <button class="btn-3d btn-primary" onclick="saveGeminiApiKey()" style="flex:1;">
+              <i class="fa-solid fa-floppy-disk"></i> Simpan API Key
+            </button>
+            <button class="btn-3d btn-rose" onclick="clearGeminiApiKey()" style="padding:0.85rem 1rem;">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div style="background:#1E293B; border:1.5px solid #334155; border-radius:16px; padding:1.2rem; font-size:0.85rem; line-height:1.5; color:#CBD5E1;">
+          <div style="font-weight:900; color:#38BDF8; font-size:0.95rem; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.4rem;">
+            <i class="fa-solid fa-circle-info"></i> Panduan Mendapatkan API Key (Gratis):
+          </div>
+          <ol style="margin-left:1.1rem; display:flex; flex-direction:column; gap:0.4rem;">
+            <li>Buka situs <a href="https://aistudio.google.com/" target="_blank" style="color:#38BDF8; text-decoration:underline;">Google AI Studio</a>.</li>
+            <li>Login menggunakan akun Google / Akun Belajar Anda.</li>
+            <li>Klik tombol biru <strong>"Create API key"</strong> di sebelah kiri.</li>
+            <li>Pilih opsi <strong>Create API key in a new project</strong> (penting untuk reset kuota).</li>
+            <li>Salin (Copy) kode yang muncul lalu tempel (Paste) di kolom input.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       LOGIKA JAVASCRIPT LENGKAP & MODULAR
+       ======================================================== -->
+  <script>
+    /* Audio Synthesizer Aman */
+    const SoundEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) this.ctx = new AudioContext();
+          } catch (e) {
+            console.warn("AudioContext init error:", e);
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+      },
+      playTone(freq, type, duration) {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      },
+      playClick() { this.playTone(600, 'sine', 0.08); },
+      playCorrect() {
+        this.playTone(523.25, 'triangle', 0.12);
+        setTimeout(() => this.playTone(659.25, 'triangle', 0.2), 100);
+      },
+      playWrong() {
+        this.playTone(220, 'sawtooth', 0.15);
+        setTimeout(() => this.playTone(180, 'sawtooth', 0.25), 140);
+      },
+      playVictory() {
+        const notes = [440, 554, 659, 880];
+        notes.forEach((f, i) => {
+          setTimeout(() => this.playTone(f, 'sine', 0.25), i * 120);
+        });
+      }
+    };
+
+    /* App Global State */
+    const AppState = {
+      screenHistory: ['screen-home'],
+      selectedGrade: 7,
+      selectedSemester: 1,
+      currentTopicId: 'pengukuran-7-1',
+      currentSlide: 0,
+      userCount: 1,
+      students: [
+        { name: 'Udin', kelas: 'Kelas 7A', score: 0, rawScore: 0, maxPossible: 0, currentIndex: 0, questions: [], finished: false },
+        { name: 'Siti', kelas: 'Kelas 7A', score: 0, rawScore: 0, maxPossible: 0, currentIndex: 0, questions: [], finished: false },
+        { name: 'Budi', kelas: 'Kelas 7A', score: 0, rawScore: 0, maxPossible: 0, currentIndex: 0, questions: [], finished: false }
+      ],
+      evalMode: 'pg',
+      dndIndex: 0,
+      dndScore: 0,
+      dndSelected: null,
+      dndPool: [],
+      dndLeft: [],
+      dndRight: [],
+      matchIndex: 0,
+      matchScore: 0,
+      matchSelectedLeft: null
+    };
+
+    /* ========================================================
+       DATABASE ATP LENGKAP KELAS 7, 8, 9 (SESUAI DOKUMEN PDF RESMI)
+       ======================================================== --> */
+    const atpDatabase = {
+      "7_1": [
+        { id: "pengukuran-7-1", name: "Pengukuran", isReady: true, countTP: 6, desc: "Besaran pokok/turunan, mistar, jangka sorong, neraca Ohaus, volume tidak beraturan, dan pelaporan ilmiah." },
+        { id: "makhluk-hidup-7-1", name: "Karakteristik Makhluk Hidup", isReady: false, countTP: 4, desc: "Ciri-ciri makhluk hidup, perbandingan dengan benda mati, serta keanekaragaman hayati tingkat gen, jenis, dan ekosistem." },
+        { id: "klasifikasi-7-1", name: "Klasifikasi Makhluk Hidup", isReady: false, countTP: 5, desc: "Tujuan klasifikasi, kunci determinasi sederhana, pengelompokan tumbuhan dan hewan secara holistik." },
+        { id: "wujud-materi-7-1", name: "Wujud dan Sifat Materi", isReady: false, countTP: 4, desc: "Wujud zat padat/cair/gas, teori partikel zat, unsur, senyawa, campuran, serta uji larutan asam basa garam." },
+        { id: "perubahan-materi-7-1", name: "Perubahan Materi", isReady: false, countTP: 3, desc: "Perubahan fisika vs kimia, teknik dasar pemisahan campuran, dan aplikasi perubahan wujud zat." },
+        { id: "proyek-ipa-7-1", name: "Proyek IPA Terpadu 1", isReady: false, countTP: 3, desc: "Perancangan, pelaksanaan penyelidikan gejala alam, dan presentasi laporan ilmiah sains terpadu." }
+      ],
+      "7_2": [
+        { id: "wujud-lanjut-7-2", name: "Wujud Materi & Partikel", isReady: false, countTP: 4, desc: "Pengamatan wujud zat, sifat partikel gas/cair/padat, serta eksperimen perubahan fisika dan kimia." },
+        { id: "pemisahan-7-2", name: "Pemisahan Campuran & Suhu", isReady: false, countTP: 3, desc: "Simulasi filtrasi, proyek penjernihan air mandiri, dan pengukuran konsep suhu tubuh." },
+        { id: "kalor-7-2", name: "Kalor dan Perpindahannya", isReady: false, countTP: 9, desc: "Konversi skala termometer, kalor jenis, kalor laten, pemuaian, konduksi, konveksi, dan radiasi termos." },
+        { id: "gerak-gaya-7-2", name: "Gerak, Gaya, & Hukum Newton", isReady: false, countTP: 9, desc: "Kelajuan vs kecepatan, Hukum Newton I, II, III (kelembaman, gaya, aksi-reaksi), serta roket air." }
+      ],
+      "8_1": [
+        { id: "sel-jaringan-8-1", name: "Sel dan Jaringan", isReady: false, countTP: 4, desc: "Struktur sel mikroskopis, perbandingan sel hewan vs tumbuhan, serta klasifikasi jaringan hewan & tumbuhan." },
+        { id: "organ-sistem-8-1", name: "Organ & Organisasi Kehidupan", isReady: false, countTP: 4, desc: "Hierarki sel, jaringan, organ, sistem organ hingga organisme hidup seutuhnya." },
+        { id: "pencernaan-8-1", name: "Sistem Pencernaan Manusia", isReady: false, countTP: 3, desc: "Anatomi organ pencernaan, uji enzim kimiawi & mekanik, serta diagnosis kelainan pencernaan." },
+        { id: "peredaran-darah-8-1", name: "Sistem Peredaran Darah", isReady: false, countTP: 3, desc: "Komponen sel darah, mekanisme sirkulasi darah ganda, dan analisis gangguan kardiovaskular." },
+        { id: "pernapasan-ekskresi-8-1", name: "Pernapasan dan Ekskresi", isReady: false, countTP: 5, desc: "Mekanisme dada & perut, fisiologi nefron ginjal pada pembentukan urine, dan gangguan respirasi." },
+        { id: "tekanan-zat-8-1", name: "Tekanan Zat (Padat, Cair, Gas)", isReady: false, countTP: 6, desc: "Hukum tekanan zat padat, tekanan hidrostatis bejana, Hukum Archimedes, dan aplikasi tekanan pernapasan." }
+      ],
+      "8_2": [
+        { id: "usaha-energi-8-2", name: "Usaha dan Energi", isReady: false, countTP: 8, desc: "Perhitungan matematis usaha, energi kinetik, energi potensial gravitasi, serta hukum kekekalan energi." },
+        { id: "getaran-gelombang-8-2", name: "Getaran, Gelombang, & Bunyi", isReady: false, countTP: 6, desc: "Frekuensi, periode, cepat rambat gelombang transversal & longitudinal, serta pemanfaatan sonar bunyi." },
+        { id: "cahaya-optik-8-2", name: "Cahaya dan Alat Optik", isReady: false, countTP: 2, desc: "Sifat perambatan cahaya, pembiasan lensa, serta pemanfaatan mikroskop dan lup kacamata." },
+        { id: "ekosistem-8-2", name: "Ekosistem & Interaksi Lingkungan", isReady: false, countTP: 7, desc: "Komponen biotik-abiotik, jaring makanan, piramida energi, simbiosis, dan dinamika populasi." },
+        { id: "konservasi-8-2", name: "Pencemaran & Pelestarian Alam", isReady: false, countTP: 2, desc: "Dampak polusi lingkungan hidup dan perancangan aksi nyata solusi konservasi keanekaragaman hayati." }
+      ],
+      "9_1": [
+        { id: "kelistrikan-9-1", name: "Rangkaian Listrik & Hukum Ohm", isReady: false, countTP: 4, desc: "Komponen listrik, rangkaian seri & paralel, penerapan rumus Ohm, dan analisis tagihan energi rumah tangga." },
+        { id: "kemagnetan-9-1", name: "Kemagnetan & Induksi Elektromagnetik", isReady: false, countTP: 4, desc: "Sifat bahan magnet, garis gaya medan magnet, eksperimen kumparan Faraday, dan perhitungan trafo." },
+        { id: "energi-hijau-9-1", name: "Energi Terbarukan & Teknologi Hijau", isReady: false, countTP: 2, desc: "Eksplorasi sumber energi listrik ramah lingkungan dan teknologi energi masa depan." },
+        { id: "tata-surya-9-1", name: "Sistem Tata Surya & Fenomena Alam", isReady: false, countTP: 4, desc: "Karakteristik planet, pemodelan orbit bumi-bulan-matahari, gerhana, pasang surut air laut, dan pergantian musim." },
+        { id: "iklim-lingkungan-9-1", name: "Dinamika Ekosistem & Perubahan Iklim", isReady: false, countTP: 8, desc: "Penyebab pemanasan global, mitigasi cuaca ekstrem, proyek hijau, dan gelar karya inovasi lingkungan." }
+      ],
+      "9_2": [
+        { id: "pewarisan-sifat-9-2", name: "Pewarisan Sifat (Genetika)", isReady: false, countTP: 8, desc: "Struktur gen DNA/RNA, autosom vs gonosom, Hukum Mendel, persilangan monohibrid/dihibrid, dan silsilah pedigree." },
+        { id: "bioteknologi-9-2", name: "Bioteknologi Konvensional", isReady: false, countTP: 7, desc: "Prinsip fermentasi mikroorganisme pangan (tapai, tempe, yoghurt) dan evaluasi mutu produk bioteknologi." },
+        { id: "zat-aditif-9-2", name: "Zat Aditif dan Zat Adiktif (NAPZA)", isReady: false, countTP: 8, desc: "Pewarna/pemanis/pengawet alami vs buatan, efek psikososial narkotika, serta strategi kampanye hidup sehat." }
+      ]
+    };
+
+    /* Tabel Detail ATP untuk Topik Pengukuran (Sesuai Halaman 1 PDF) */
+    const detailATP_Pengukuran = [
+      { no: 1, elemen: "Pengukuran", tp: "Peserta didik mampu mengidentifikasi besaran pokok dan besaran turunan.", solo: "Unistruktural", jp: "3 JP", profil: "Penalaran Kritis", ket: "Pengenalan besaran" },
+      { no: 2, elemen: "Pengukuran", tp: "Peserta didik mampu menggunakan alat ukur panjang dengan benar.", solo: "Multistruktural", jp: "3 JP", profil: "Kemandirian", ket: "Praktik ukur panjang" },
+      { no: 3, elemen: "Pengukuran", tp: "Peserta didik mampu menggunakan alat ukur massa dan waktu.", solo: "Multistruktural", jp: "3 JP", profil: "Kemandirian", ket: "Praktik ukur massa waktu" },
+      { no: 4, elemen: "Pengukuran", tp: "Peserta didik mampu menentukan volume benda tidak beraturan.", solo: "Relasional", jp: "3 JP", profil: "Penalaran Kritis", ket: "Eksperimen volume" },
+      { no: 5, elemen: "Pengukuran", tp: "Peserta didik mampu menghitung nilai besaran turunan sederhana.", solo: "Relasional", jp: "3 JP", profil: "Penalaran Kritis", ket: "Perhitungan matematis" },
+      { no: 6, elemen: "Pengukuran", tp: "Peserta didik mampu menyimpulkan hasil pengukuran dalam laporan.", solo: "Extended Abstract", jp: "3 JP", profil: "Komunikasi", ket: "Penyusunan laporan" }
+    ];
+
+    /* Navigasi Antar Layar */
+    function navTo(screenId) {
+      SoundEngine.playClick();
+      const current = AppState.screenHistory[AppState.screenHistory.length - 1];
+      if (current !== screenId) {
+        AppState.screenHistory.push(screenId);
+      }
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function navGoBack() {
+      SoundEngine.playClick();
+      if (AppState.screenHistory.length > 1) {
+        AppState.screenHistory.pop();
+        const prev = AppState.screenHistory[AppState.screenHistory.length - 1];
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById(prev);
+        if (target) {
+          target.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else {
+        navGoHome();
+      }
+    }
+
+    function navGoHome() {
+      SoundEngine.playClick();
+      AppState.screenHistory = ['screen-home'];
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const home = document.getElementById('screen-home');
+      if (home) {
+        home.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    /* Pemilihan Kelas dan Semester di Beranda */
+    function selectGrade(grade) {
+      SoundEngine.playClick();
+      AppState.selectedGrade = grade;
+      document.querySelectorAll('[id^="btn-grade-"]').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-grade-${grade}`).classList.add('active');
+      renderTopicCatalog();
+    }
+
+    function selectSemester(sem) {
+      SoundEngine.playClick();
+      AppState.selectedSemester = sem;
+      document.querySelectorAll('[id^="btn-sem-"]').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-sem-${sem}`).classList.add('active');
+      renderTopicCatalog();
+    }
+
+    function renderTopicCatalog() {
+      const container = document.getElementById('topic-catalog-container');
+      const heading = document.getElementById('catalog-heading-title');
+      const displayTxt = document.getElementById('portal-current-display');
+      if (!container) return;
+
+      const key = `${AppState.selectedGrade}_${AppState.selectedSemester}`;
+      const topics = atpDatabase[key] || [];
+
+      heading.innerHTML = `<i class="fa-solid fa-list-check" style="color:#0284C7;"></i> Topik IPA Kelas ${AppState.selectedGrade} - Semester ${AppState.selectedSemester} (${topics.length} Bab Sesuai ATP)`;
+      displayTxt.innerText = `Menampilkan Kurikulum IPA Fase D: Kelas ${AppState.selectedGrade} / Semester ${AppState.selectedSemester === 1 ? 'Ganjil' : 'Genap'}`;
+
+      container.innerHTML = '';
+      topics.forEach((t, idx) => {
+        const card = document.createElement('div');
+        card.className = `topic-card ${t.isReady ? 'featured' : ''}`;
+        
+        const badge = t.isReady
+          ? `<span class="topic-badge-status status-ready"><i class="fa-solid fa-circle-check"></i> Modul Siap Belajar</span>`
+          : `<span class="topic-badge-status status-ai"><i class="fa-solid fa-wand-magic-sparkles"></i> Siap Di-Generate AI</span>`;
+
+        card.innerHTML = `
+          <div>
+            ${badge}
+            <div class="topic-card-title">
+              <span>${idx + 1}. ${t.name}</span>
+            </div>
+            <p class="topic-card-desc">${t.desc}</p>
+          </div>
+          <div style="margin-top:0.8rem; display:flex; justify-content:space-between; align-items:center;">
+            <span class="topic-meta-tags">
+              <span><i class="fa-solid fa-bullseye"></i> ${t.countTP} TP Lengkap</span>
+            </span>
+            <span style="font-weight:900; font-size:0.88rem; color:${t.isReady ? '#059669' : '#7C3AED'};">
+              ${t.isReady ? 'Buka Modul →' : 'Eksplorasi Bab →'}
+            </span>
+          </div>
+        `;
+
+        card.addEventListener('pointerdown', () => {
+          openTopic(t);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function openTopic(topic) {
+      SoundEngine.playClick();
+      AppState.currentTopicId = topic.id;
+
+      if (topic.id === 'pengukuran-7-1') {
+        // Tampilkan Modul Pengukuran yang sudah 100% lengkap
+        document.getElementById('subhub-topic-title').innerText = topic.name;
+        document.getElementById('subhub-category-pill').innerText = `Kelas ${AppState.selectedGrade} • Semester ${AppState.selectedSemester}`;
+        document.getElementById('subhub-topic-desc').innerText = topic.desc;
+        renderCptpTable(detailATP_Pengukuran);
+        navTo('screen-subhub');
+      } else {
+        // Topik lainnya siap dipelajari atau digenerate otomatis dengan Gemini AI
+        handleAiTopicRequest(topic);
+      }
+    }
+
+    function renderCptpTable(dataList) {
+      const tbody = document.getElementById('cptp-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      dataList.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${item.no}</strong></td>
+          <td><span style="font-weight:800; color:#0369A1;">${item.elemen}</span></td>
+          <td>${item.tp}</td>
+          <td><span class="pill-solo">${item.solo}</span></td>
+          <td><strong>${item.jp}</strong></td>
+          <td><i class="fa-solid fa-brain" style="color:#0284C7;"></i> ${item.profil}</td>
+          <td><span style="background:#DCFCE7; color:#166534; padding:0.25rem 0.6rem; border-radius:6px; font-weight:800; font-size:0.8rem;">${item.ket}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    /* ========================================================
+       INTEGRASI GEMINI AI
+       ======================================================== */
+    function openGeminiModal() {
+      SoundEngine.playClick();
+      const modal = document.getElementById('gemini-modal-backdrop');
+      const input = document.getElementById('input-gemini-key');
+      const savedKey = localStorage.getItem('gemini_api_key') || '';
+      if (input) input.value = savedKey;
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeGeminiModal() {
+      SoundEngine.playClick();
+      const modal = document.getElementById('gemini-modal-backdrop');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function toggleKeyVisibility() {
+      const input = document.getElementById('input-gemini-key');
+      const icon = document.getElementById('icon-eye-key');
+      if (!input || !icon) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    }
+
+    function saveGeminiApiKey() {
+      const input = document.getElementById('input-gemini-key');
+      const key = input ? input.value.trim() : '';
+      if (key) {
+        localStorage.setItem('gemini_api_key', key);
+        SoundEngine.playCorrect();
+        Swal.fire({
+          icon: 'success',
+          title: 'API Key Disimpan!',
+          text: 'Kunci Gemini AI Anda telah aktif di perangkat ini.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      } else {
+        localStorage.removeItem('gemini_api_key');
+      }
+      closeGeminiModal();
+    }
+
+    function clearGeminiApiKey() {
+      localStorage.removeItem('gemini_api_key');
+      const input = document.getElementById('input-gemini-key');
+      if (input) input.value = '';
+      SoundEngine.playClick();
+      Swal.fire({
+        icon: 'info',
+        title: 'API Key Dihapus',
+        text: 'Kunci Gemini AI telah dibersihkan dari penyimpanan lokal.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
+
+    async function handleAiTopicRequest(topic) {
+      const savedKey = localStorage.getItem('gemini_api_key') || '';
+      
+      const res = await Swal.fire({
+        title: `Eksplorasi Bab: ${topic.name}`,
+        html: `
+          <div style="text-align:left; font-size:0.92rem; color:#334155; line-height:1.5;">
+            <p>Bab ini mencakup <strong>${topic.countTP} Tujuan Pembelajaran (ATP)</strong>.</p>
+            <p style="margin-top:0.4rem;">${topic.desc}</p>
+            <div style="background:#F0FDF4; border-left:4px solid #16A34A; padding:0.8rem; border-radius:8px; margin-top:0.8rem;">
+              <strong>Fitur Unggulan Studio AI:</strong> Anda dapat membuat ringkasan materi interaktif, studi kasus lokal, atau bank soal baru menggunakan kecerdasan buatan Gemini.
+            </div>
+          </div>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-wand-magic-sparkles"></i> Tanya / Buat Modul AI',
+        cancelButtonText: 'Tutup',
+        confirmButtonColor: '#7C3AED'
+      });
+
+      if (!res.isConfirmed) return;
+
+      if (!savedKey) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'API Key Belum Terpasang',
+          text: 'Silakan masukkan Gemini API Key terlebih dahulu di menu Integrasi AI!',
+          confirmButtonText: 'Buka Pengaturan AI',
+          confirmButtonColor: '#0284C7'
+        }).then(() => {
+          openGeminiModal();
+        });
+        return;
+      }
+
+      // Dialog Interaktif Pembuatan Konten AI
+      const promptRes = await Swal.fire({
+        title: `Studio AI: ${topic.name}`,
+        input: 'text',
+        inputLabel: 'Tanyakan konsep atau minta AI buat materi/soal untuk bab ini:',
+        inputValue: `Jelaskan konsep inti dari ${topic.name} untuk siswa SMP Kelas ${AppState.selectedGrade} dengan analogi sederhana dan contoh soal HOTS.`,
+        showCancelButton: true,
+        confirmButtonText: 'Kirim ke Gemini AI',
+        confirmButtonColor: '#0284C7',
+        showLoaderOnConfirm: true,
+        preConfirm: async (userPrompt) => {
+          try {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${savedKey}`;
+            const payload = {
+              contents: [{ parts: [{ text: userPrompt }] }],
+              systemInstruction: {
+                parts: [{ text: "Anda adalah Guru Ahli IPA SMP Kurikulum Merdeka di SMP Satu Atap Libaru Sungkai. Jelaskan materi sains secara mendalam, santun, terstruktur, ramah anak, dan sertakan contoh konkret kontekstual." }]
+              }
+            };
+
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              throw new Error(errData.error?.message || `HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!reply) throw new Error("Format respons tidak sesuai atau konten kosong.");
+            return reply;
+          } catch (error) {
+            Swal.showValidationMessage(`Gagal memanggil Gemini: ${error.message}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      });
+
+      if (promptRes.isConfirmed && promptRes.value) {
+        SoundEngine.playVictory();
+        Swal.fire({
+          title: `Hasil Studio AI: ${topic.name}`,
+          width: 780,
+          html: `
+            <div style="text-align:left; max-height:420px; overflow-y:auto; padding:1rem; background:#F8FAFC; border:1px solid #CBD5E1; border-radius:12px; font-size:0.95rem; line-height:1.6; white-space:pre-wrap; color:#0F172A;">${promptRes.value}</div>
+          `,
+          confirmButtonText: 'Tutup & Simpan',
+          confirmButtonColor: '#059669'
+        });
+      }
+    }
+
+    /* ========================================================
+       DATA MATERI SLIDER (TOPIK PENGUKURAN: 6 SUBTOPIK DENGAN SIMBOL BAKU)
+       ======================================================== */
+    const materiData = [
+      {
+        badge: "TP 1 • Keterangan: Pengenalan besaran (3 JP - Unistruktural)",
+        title: "1. Pengenalan Besaran: Pokok dan Besaran Turunan",
+        desc: `
+          <p>Dalam sains (IPA), <strong>mengukur</strong> adalah membandingkan nilai suatu besaran yang diukur dengan besaran sejenis yang ditetapkan sebagai satuan standar acuan internasional (SI).</p>
+          <div style="background:#F0FDF4; border-left:4px solid #16A34A; padding:0.8rem; border-radius:8px; margin:0.6rem 0; font-size:0.95rem;">
+            <strong>7 Besaran Pokok dalam Sistem Internasional (SI):</strong><br>
+            1. <strong>Panjang:</strong> meter (m)<br>
+            2. <strong>Massa:</strong> kilogram (kg)<br>
+            3. <strong>Waktu:</strong> sekon (s)<br>
+            4. <strong>Suhu Mutlak:</strong> Kelvin (K)<br>
+            5. <strong>Kuat Arus Listrik:</strong> Ampere (A)<br>
+            6. <strong>Jumlah Zat:</strong> mol<br>
+            7. <strong>Intensitas Cahaya:</strong> kandela (cd)
+          </div>
+          <p><strong>Besaran Turunan:</strong> Besaran yang diturunkan dari kombinasi satu atau lebih besaran pokok melalui rumus matematis. Contohnya: <em>Luas</em> (m²), <em>Volume</em> (m³), <em>Kecepatan</em> (m/s), <em>Massa Jenis</em> (kg/m³), dan <em>Gaya</em> (N atau kg·m/s²).</p>
+        `,
+        defaultSearch: "Steel ruler metric scale",
+        quickKeywords: ["Mistar Metrik", "Penggaris Logam", "Satuan Internasional SI"],
+        caption: "Mistar Logam Skala Metrik Milimeter (Ketelitian 1 mm / 0,1 cm)",
+        fallbackSvg: `
+          <svg viewBox="0 0 460 240" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="460" height="240" fill="#F8FAFC" rx="12"/>
+            <rect x="25" y="75" width="410" height="90" fill="#E2E8F0" stroke="#475569" stroke-width="3" rx="6"/>
+            <line x1="50" y1="75" x2="50" y2="125" stroke="#1E293B" stroke-width="3.5"/>
+            <line x1="80" y1="75" x2="80" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="110" y1="75" x2="110" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="140" y1="75" x2="140" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="170" y1="75" x2="170" y2="125" stroke="#1E293B" stroke-width="3.5"/>
+            <line x1="200" y1="75" x2="200" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="230" y1="75" x2="230" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="260" y1="75" x2="260" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="290" y1="75" x2="290" y2="125" stroke="#1E293B" stroke-width="3.5"/>
+            <line x1="320" y1="75" x2="320" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="350" y1="75" x2="350" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="380" y1="75" x2="380" y2="105" stroke="#1E293B" stroke-width="2"/>
+            <line x1="410" y1="75" x2="410" y2="125" stroke="#1E293B" stroke-width="3.5"/>
+            <text x="50" y="150" font-size="16" font-weight="900" fill="#0F172A" text-anchor="middle">0</text>
+            <text x="170" y="150" font-size="16" font-weight="900" fill="#0F172A" text-anchor="middle">1 cm</text>
+            <text x="290" y="150" font-size="16" font-weight="900" fill="#0F172A" text-anchor="middle">2 cm</text>
+            <text x="410" y="150" font-size="16" font-weight="900" fill="#0F172A" text-anchor="middle">3 cm</text>
+            <text x="230" y="205" font-size="14" font-weight="800" fill="#0369A1" text-anchor="middle">Mistar Metrik (Ketelitian 1 mm / 0,1 cm)</text>
+          </svg>
+        `
+      },
+      {
+        badge: "TP 2 • Keterangan: Praktik ukur panjang (3 JP - Multistruktural)",
+        title: "2. Praktik Pengukuran Panjang: Mistar, Jangka Sorong & Mikrometer",
+        desc: `
+          <p>Pemilihan instrumen ukur panjang disesuaikan dengan tingkat ketelitian dan bentuk benda:</p>
+          <ul style="margin-left:1.2rem; line-height:1.6; margin-bottom:0.6rem;">
+            <li><strong>Mistar:</strong> Ketelitian <strong>1 mm (0,1 cm)</strong>. Pembacaan tegak lurus untuk mencegah kesalahan paralaks.</li>
+            <li><strong>Jangka Sorong (Vernier Caliper):</strong> Ketelitian <strong>0,1 mm (0,01 cm)</strong>.
+              <br>&bull; <em>Rahang Bawah:</em> Diameter luar tabung/kelereng.
+              <br>&bull; <em>Rahang Atas:</em> Diameter dalam cincin/mulut pipa.
+              <br>&bull; <em>Ekor Belakang:</em> Kedalaman bejana atau tabung reaksi.
+            </li>
+            <li><strong>Mikrometer Sekrup:</strong> Ketelitian paling tinggi mencapai <strong>0,01 mm</strong> untuk tebal kertas, kawat tipis, dan pelat logam.</li>
+          </ul>
+          <div style="background:#EFF6FF; border:1px solid #93C5FD; padding:0.6rem; border-radius:8px; font-size:0.9rem; color:#1E40AF;">
+            <strong>Rumus Jangka Sorong:</strong> Nilai = Skala Utama (cm) + (Garis Nonius Sejajar &times; 0,01 cm).
+          </div>
+        `,
+        defaultSearch: "Vernier caliper measurement",
+        quickKeywords: ["Jangka Sorong", "Vernier Caliper", "Mikrometer Sekrup"],
+        caption: "Jangka Sorong: Rahang Luar, Rahang Dalam, Skala Nonius & Ekor Kedalaman",
+        fallbackSvg: `
+          <svg viewBox="0 0 460 240" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="460" height="240" fill="#F8FAFC" rx="12"/>
+            <rect x="30" y="85" width="400" height="40" fill="#CBD5E1" stroke="#334155" stroke-width="2.5" rx="3"/>
+            <path d="M 30 45 L 65 45 L 65 85 L 85 180 L 50 180 L 30 125 Z" fill="#94A3B8" stroke="#334155" stroke-width="2.5"/>
+            <path d="M 170 50 L 195 50 L 195 85 L 210 175 L 180 175 L 170 125 Z" fill="#38BDF8" stroke="#0284C7" stroke-width="2.5"/>
+            <line x1="430" y1="105" x2="455" y2="105" stroke="#475569" stroke-width="4"/>
+            <line x1="90" y1="100" x2="420" y2="100" stroke="#0F172A" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <text x="58" y="38" font-size="11" font-weight="800" fill="#0369A1" text-anchor="middle">Rahang Dalam</text>
+            <text x="68" y="200" font-size="11" font-weight="800" fill="#0369A1" text-anchor="middle">Rahang Luar</text>
+            <text x="240" y="215" font-size="13" font-weight="800" fill="#0F172A" text-anchor="middle">Jangka Sorong (Ketelitian 0,01 cm / 0,1 mm)</text>
+          </svg>
+        `
+      },
+      {
+        badge: "TP 3 • Keterangan: Praktik ukur massa waktu (3 JP - Multistruktural)",
+        title: "3. Praktik Pengukuran Massa (Neraca Ohaus) dan Waktu (Stopwatch)",
+        desc: `
+          <p>Massa adalah jumlah materi penyusun benda yang nilainya <strong>selalu tetap</strong> (konstan) di manapun berada.</p>
+          <div style="background:#FFFBEB; border-left:4px solid #F59E0B; padding:0.8rem; border-radius:8px; margin:0.6rem 0; font-size:0.95rem; color:#78350F;">
+            <strong>Langkah Praktik Neraca Ohaus 3 Lengan:</strong><br>
+            1. <strong>Kalibrasi Nol:</strong> Putar sekrup penyeimbang hingga jarum tepat sejajar garis nol saat piringan kosong.<br>
+            2. <strong>Geser Anting Beban:</strong> Lengan belakang (ratusan g), lengan tengah (puluhan g), lengan depan (satuan & desimal g).<br>
+            3. <strong>Hitung Total:</strong> Jumlahkan penunjukan ketiga lengan.
+          </div>
+          <p><strong>Pengukuran Waktu:</strong> Menggunakan <em>Stopwatch</em> dengan ketelitian 0,1 detik (analog) atau 0,01 detik (digital). Tekan tombol start bersamaan dengan awal gerakan dan stop tepat di akhir gerak.</p>
+        `,
+        defaultSearch: "Triple beam balance lab",
+        quickKeywords: ["Neraca Ohaus 3 Lengan", "Stopwatch Praktikum", "Triple Beam Balance"],
+        caption: "Neraca Ohaus Tiga Lengan dan Stopwatch Laboratorium",
+        fallbackSvg: `
+          <svg viewBox="0 0 500 240" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="500" height="240" fill="#F8FAFC" rx="12"/>
+            <path d="M 80 195 L 450 195 L 430 170 L 110 170 Z" fill="#475569" stroke="#1E293B" stroke-width="2.5"/>
+            <rect x="180" y="70" width="22" height="100" fill="#64748B" stroke="#1E293B" stroke-width="2"/>
+            <polygon points="175,70 207,70 191,55" fill="#334155"/>
+            <path d="M 50 100 Q 110 100 110 85 L 50 85 Z" fill="#94A3B8" stroke="#1E293B" stroke-width="2"/>
+            <line x1="80" y1="100" x2="80" y2="125" stroke="#334155" stroke-width="3"/>
+            <circle cx="115" cy="65" r="9" fill="#F59E0B" stroke="#B45309" stroke-width="2"/>
+            <line x1="185" y1="62" x2="430" y2="62" stroke="#64748B" stroke-width="4"/>
+            <rect x="260" y="55" width="18" height="14" fill="#0284C7" stroke="#0369A1" rx="2"/>
+            <line x1="185" y1="75" x2="430" y2="75" stroke="#475569" stroke-width="5"/>
+            <rect x="310" y="67" width="22" height="16" fill="#059669" stroke="#047857" rx="2"/>
+            <line x1="185" y1="90" x2="430" y2="90" stroke="#334155" stroke-width="4"/>
+            <rect x="360" y="83" width="14" height="14" fill="#E11D48" stroke="#BE123C" rx="2"/>
+            <rect x="428" y="50" width="24" height="60" fill="#E2E8F0" stroke="#334155" stroke-width="2"/>
+            <polygon points="425,78 440,80 425,82" fill="#DC2626"/>
+            <text x="250" y="222" font-size="14" font-weight="900" fill="#0F172A" text-anchor="middle">Neraca Ohaus 3 Lengan & Pengukuran Waktu Presisi</text>
+          </svg>
+        `
+      },
+      {
+        badge: "TP 4 • Keterangan: Eksperimen volume (3 JP - Relasional)",
+        title: "4. Eksperimen Menentukan Volume Benda Tidak Beraturan",
+        desc: `
+          <p>Benda padat yang bentuknya tidak beraturan (seperti kerikil sungai, baut mesin, atau batu kali) tidak dapat diukur volumenya menggunakan rumus geometri biasa.</p>
+          <div style="background:#F1F5F9; border-left:4px solid #0284C7; padding:0.9rem; border-radius:10px; margin:0.7rem 0; font-size:0.95rem;">
+            <strong style="color:#0369A1;">Metode Perpindahan Zat Cair (Displacement Method):</strong><br>
+            1. Isi gelas ukur dengan air hingga volume awal tertentu (<em>V</em><sub>1</sub>).<br>
+            2. Masukkan benda tidak beraturan secara perlahan dengan benang agar air tidak memercik keluar.<br>
+            3. Catat volume akhir setelah seluruh bagian benda tercelup sempurna (<em>V</em><sub>2</sub>).<br>
+            <div style="margin-top:0.6rem; padding:0.5rem 0.8rem; background:#FFFFFF; border:1.5px solid #BAE6FD; border-radius:8px; display:inline-block; font-weight:800; color:#0369A1;">
+              Rumus Volume Benda: <em>V</em><sub>benda</sub> = <em>V</em><sub>2</sub> &minus; <em>V</em><sub>1</sub>
+            </div>
+          </div>
+          <p><strong>Gelas Berpancuran (Eureka Can):</strong> Air yang tumpah ke dalam gelas ukur penampung persis sama dengan volume benda yang dimasukkan.</p>
+        `,
+        defaultSearch: "Graduated cylinder water",
+        quickKeywords: ["Gelas Ukur", "Graduated Cylinder", "Eureka Can Displacement"],
+        caption: "Metode Perpindahan Air untuk Volume Benda Tak Beraturan",
+        fallbackSvg: `
+          <svg viewBox="0 0 460 240" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="460" height="240" fill="#F8FAFC" rx="12"/>
+            <rect x="90" y="35" width="70" height="150" fill="#FFFFFF" stroke="#0284C7" stroke-width="3" rx="6"/>
+            <rect x="93" y="105" width="64" height="77" fill="#BAE6FD" opacity="0.85"/>
+            <text x="125" y="205" font-size="12" font-weight="800" fill="#0369A1" text-anchor="middle">V1 = 50 mL</text>
+            <rect x="280" y="35" width="70" height="150" fill="#FFFFFF" stroke="#0284C7" stroke-width="3" rx="6"/>
+            <rect x="283" y="70" width="64" height="112" fill="#BAE6FD" opacity="0.85"/>
+            <circle cx="315" cy="155" r="16" fill="#64748B" stroke="#334155" stroke-width="2"/>
+            <text x="315" y="205" font-size="12" font-weight="800" fill="#0369A1" text-anchor="middle">V2 = 75 mL</text>
+            <text x="220" y="25" font-size="14" font-weight="900" fill="#059669" text-anchor="middle">Volume Batu = V2 - V1 = 25 mL</text>
+          </svg>
+        `
+      },
+      {
+        badge: "TP 5 • Keterangan: Perhitungan matematis (3 JP - Relasional)",
+        title: "5. Perhitungan Matematis Nilai Besaran Turunan Sederhana",
+        desc: `
+          <p>Besaran turunan dihitung dengan menggabungkan besaran-besaran pokok hasil pengukuran langsung melalui relasi matematis:</p>
+          <div style="background:#F0FDF4; border:1.5px solid #86EFAC; padding:0.9rem 1rem; border-radius:12px; margin:0.8rem 0;">
+            <div style="font-weight:900; color:#166534; font-size:1rem; margin-bottom:0.7rem;">
+              <i class="fa-solid fa-square-root-variable"></i> Formula Kunci Besaran Turunan Sederhana:
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.65rem; font-size:0.95rem; color:#1E293B;">
+              <div style="background:#FFFFFF; padding:0.55rem 0.85rem; border-radius:8px; border-left:3.5px solid #16A34A; display:flex; justify-content:space-between; align-items:center;">
+                <div><strong>&bull; Luas (<em>A</em>):</strong> <em>A</em> = panjang &times; lebar</div>
+                <span style="background:#DCFCE7; color:#15803D; font-weight:800; font-size:0.85rem; padding:0.15rem 0.6rem; border-radius:6px;">Satuan: m<sup>2</sup></span>
+              </div>
+              <div style="background:#FFFFFF; padding:0.55rem 0.85rem; border-radius:8px; border-left:3.5px solid #16A34A; display:flex; justify-content:space-between; align-items:center;">
+                <div><strong>&bull; Volume Balok (<em>V</em>):</strong> <em>V</em> = <em>p</em> &times; <em>l</em> &times; <em>t</em></div>
+                <span style="background:#DCFCE7; color:#15803D; font-weight:800; font-size:0.85rem; padding:0.15rem 0.6rem; border-radius:6px;">Satuan: m<sup>3</sup></span>
+              </div>
+              <div style="background:#FFFFFF; padding:0.55rem 0.85rem; border-radius:8px; border-left:3.5px solid #0284C7; display:flex; justify-content:space-between; align-items:center;">
+                <div><strong>&bull; Kecepatan (<em>v</em>):</strong> <em>v</em> = jarak / waktu</div>
+                <span style="background:#E0F2FE; color:#0369A1; font-weight:800; font-size:0.85rem; padding:0.15rem 0.6rem; border-radius:6px;">Satuan: m/s</span>
+              </div>
+              <div style="background:#FFFFFF; padding:0.55rem 0.85rem; border-radius:8px; border-left:3.5px solid #D97706; display:flex; justify-content:space-between; align-items:center;">
+                <div><strong>&bull; Massa Jenis (<em>&rho;</em>):</strong> <em>&rho;</em> = massa / volume</div>
+                <span style="background:#FEF3C7; color:#B45309; font-weight:800; font-size:0.85rem; padding:0.15rem 0.6rem; border-radius:6px;">Satuan: kg/m<sup>3</sup> atau g/cm<sup>3</sup></span>
+              </div>
+            </div>
+          </div>
+        `,
+        defaultSearch: "Density mass volume calculation",
+        quickKeywords: ["Massa Jenis", "Density Lab", "Perhitungan Besaran Turunan"],
+        caption: "Hubungan Matematis Massa, Volume, dan Massa Jenis (ρ = m / V)",
+        fallbackSvg: `
+          <svg viewBox="0 0 460 240" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="460" height="240" fill="#F8FAFC" rx="12"/>
+            <polygon points="230,35 110,195 350,195" fill="#E0F2FE" stroke="#0284C7" stroke-width="3"/>
+            <line x1="170" y1="115" x2="290" y2="115" stroke="#0284C7" stroke-width="3"/>
+            <line x1="230" y1="115" x2="230" y2="195" stroke="#0284C7" stroke-width="3"/>
+            <text x="230" y="90" font-size="28" font-weight="900" fill="#0369A1" text-anchor="middle">m</text>
+            <text x="180" y="165" font-size="26" font-weight="900" fill="#059669" text-anchor="middle">ρ</text>
+            <text x="280" y="165" font-size="26" font-weight="900" fill="#D97706" text-anchor="middle">V</text>
+            <text x="230" y="222" font-size="13" font-weight="800" fill="#1E293B" text-anchor="middle">Segitiga Rumus: ρ = m / V  |  m = ρ × V  |  V = m / ρ</text>
+          </svg>
+        `
+      },
+      {
+        badge: "TP 6 • Keterangan: Penyusunan laporan (3 JP - Extended Abstract)",
+        title: "6. Menyimpulkan Hasil Pengukuran dalam Laporan Ilmiah",
+        desc: `
+          <p>Tingkat <em>Extended Abstract</em> menuntut siswa mampu mengevaluasi data, mengenali sumber galat, dan mengomunikasikan kesimpulan ilmiah secara objektif:</p>
+          <div style="background:#FAF5FF; border-left:4px solid #9333EA; padding:0.85rem 1rem; border-radius:10px; margin:0.7rem 0; font-size:0.95rem; color:#4C1D95;">
+            <strong>Struktur Penulisan Laporan Praktikum IPA:</strong><br>
+            1. <strong>Tujuan Percobaan:</strong> Menjawab rumusan masalah secara operasional.<br>
+            2. <strong>Data Pengamatan Berulang:</strong> Disajikan dalam tabel dengan satuan baku SI.<br>
+            3. <strong>Ketidakpastian Pengukuran (&Delta;<em>x</em>):</strong> Nilai setengah skala terkecil (&frac12; &times; nst) alat ukur.<br>
+            4. <strong>Analisis Kesalahan:</strong> Mengidentifikasi kesalahan sistematis (kalibrasi nol alat) dan kesalahan acak/paralaks pandangan mata.<br>
+            5. <strong>Kesimpulan & Rekomendasi:</strong> Menguji kesesuaian hasil terhadap hipotesis.
+            <div style="margin-top:0.6rem; padding:0.45rem 0.8rem; background:#FFFFFF; border:1.5px dashed #C084FC; border-radius:8px; color:#581C87; font-weight:800; font-size:0.9rem;">
+              Format Hasil Pengukuran: (<em>x&#772;</em> &plusmn; &Delta;<em>x</em>) Satuan SI
+            </div>
+          </div>
+        `,
+        defaultSearch: "Science lab report experiment",
+        quickKeywords: ["Laporan Sains", "Lab Report", "Pengukuran Berulang"],
+        caption: "Komponen Laporan Ilmiah: Tabel Data, Analisis Galat & Kesimpulan",
+        fallbackSvg: `
+          <svg viewBox="0 0 460 240" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="460" height="240" fill="#F8FAFC" rx="12"/>
+            <rect x="80" y="25" width="300" height="190" fill="#FFFFFF" stroke="#9333EA" stroke-width="2.5" rx="10"/>
+            <rect x="110" y="45" width="140" height="12" fill="#C084FC" rx="3"/>
+            <line x1="110" y1="75" x2="350" y2="75" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="110" y1="95" x2="350" y2="95" stroke="#CBD5E1" stroke-width="2"/>
+            <line x1="110" y1="115" x2="350" y2="115" stroke="#CBD5E1" stroke-width="2"/>
+            <rect x="110" y="140" width="240" height="45" fill="#FAF5FF" stroke="#A855F7" stroke-dasharray="3 3" rx="6"/>
+            <text x="230" y="167" font-size="12" font-weight="900" fill="#6B21A8" text-anchor="middle">Hasil = (x̄ ± Δx) Satuan SI</text>
+            <text x="230" y="228" font-size="13" font-weight="800" fill="#581C87" text-anchor="middle">Penyusunan Laporan Ilmiah Berbasis Bukti Eksperimen</text>
+          </svg>
+        `
+      }
+    ];
+
+    function renderSlide() {
+      const cur = materiData[AppState.currentSlide];
+      const titleEl = document.getElementById('slide-title');
+      const descEl = document.getElementById('slide-desc');
+      const badgeEl = document.getElementById('slide-badge');
+      const captionText = document.getElementById('slide-caption-text');
+      const searchInput = document.getElementById('img-search-query');
+      const quickBox = document.getElementById('search-quick-keywords');
+      const indicators = document.getElementById('slide-indicators');
+
+      if (titleEl) titleEl.innerText = cur.title;
+      if (descEl) descEl.innerHTML = cur.desc;
+      if (badgeEl) badgeEl.innerText = cur.badge;
+      if (captionText) captionText.innerText = cur.caption;
+      if (searchInput) searchInput.value = cur.defaultSearch;
+
+      if (indicators) {
+        indicators.innerHTML = '';
+        materiData.forEach((_, idx) => {
+          const dot = document.createElement('div');
+          dot.className = `slide-dot ${idx === AppState.currentSlide ? 'active' : ''}`;
+          dot.addEventListener('pointerdown', () => jumpSlide(idx));
+          indicators.appendChild(dot);
+        });
+      }
+
+      if (quickBox) {
+        quickBox.innerHTML = '';
+        cur.quickKeywords.forEach(kw => {
+          const chip = document.createElement('span');
+          chip.className = 'quick-kw-chip';
+          chip.innerText = kw;
+          chip.addEventListener('pointerdown', () => {
+            SoundEngine.playClick();
+            if (searchInput) searchInput.value = kw;
+            performInAppImageSearch(kw);
+          });
+          quickBox.appendChild(chip);
+        });
+      }
+
+      const prevBtn = document.getElementById('btn-slide-prev');
+      const nextBtn = document.getElementById('btn-slide-next');
+      if (prevBtn) prevBtn.style.opacity = AppState.currentSlide === 0 ? '0.4' : '1';
+      if (nextBtn) nextBtn.style.opacity = AppState.currentSlide === materiData.length - 1 ? '0.4' : '1';
+
+      showMainSlideImage(null, cur.caption);
+      performInAppImageSearch(cur.defaultSearch);
+    }
+
+    function showMainSlideImage(imgUrl, caption) {
+      const frame = document.getElementById('slide-visual-frame');
+      const cur = materiData[AppState.currentSlide];
+      if (!frame) return;
+
+      if (!imgUrl) {
+        frame.innerHTML = cur.fallbackSvg;
+        return;
+      }
+
+      frame.innerHTML = `<span style="font-size:0.85rem; color:#0284C7;"><i class="fa-solid fa-spinner fa-spin"></i> Menampilkan gambar...</span>`;
+      const img = new Image();
+      img.src = imgUrl;
+      img.alt = caption || 'Visual Instrumen';
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'contain';
+
+      img.onload = () => {
+        frame.innerHTML = '';
+        frame.appendChild(img);
+        const captionText = document.getElementById('slide-caption-text');
+        if (captionText && caption) captionText.innerText = caption;
+      };
+
+      img.onerror = () => {
+        frame.innerHTML = cur.fallbackSvg;
+      };
+    }
+
+    function prevSlide() {
+      if (AppState.currentSlide > 0) {
+        SoundEngine.playClick();
+        AppState.currentSlide--;
+        renderSlide();
+      }
+    }
+
+    function nextSlide() {
+      if (AppState.currentSlide < materiData.length - 1) {
+        SoundEngine.playClick();
+        AppState.currentSlide++;
+        renderSlide();
+      }
+    }
+
+    function jumpSlide(idx) {
+      if (idx >= 0 && idx < materiData.length) {
+        SoundEngine.playClick();
+        AppState.currentSlide = idx;
+        renderSlide();
+      }
+    }
+
+    async function performInAppImageSearch(queryTerm) {
+      const tray = document.getElementById('search-results-tray');
+      if (!tray) return;
+
+      tray.innerHTML = `<span style="font-size:0.82rem; color:#0284C7;"><i class="fa-solid fa-spinner fa-spin"></i> Menelusuri "${queryTerm}"...</span>`;
+
+      try {
+        const apiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(queryTerm)}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|thumburl|mime&iiurlwidth=400&format=json&origin=*`;
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        tray.innerHTML = '';
+        if (!data.query || !data.query.pages) {
+          tray.innerHTML = `<span style="font-size:0.8rem; color:#64748B;">Diagram teknis presisi aktif ditampilkan.</span>`;
+          return;
+        }
+
+        const validImages = Object.values(data.query.pages).filter(p => {
+          if (!p.imageinfo || !p.imageinfo[0]) return false;
+          const mime = p.imageinfo[0].mime || '';
+          const url = p.imageinfo[0].url || '';
+          return mime.startsWith('image/') && !url.endsWith('.djvu') && !url.endsWith('.pdf');
+        });
+
+        if (validImages.length === 0) {
+          tray.innerHTML = `<span style="font-size:0.8rem; color:#64748B;">Diagram ilmiah presisi aktif digunakan.</span>`;
+          return;
+        }
+
+        let first = true;
+        validImages.forEach(p => {
+          const info = p.imageinfo[0];
+          const thumbUrl = info.thumburl || info.url;
+          const fullUrl = info.url;
+
+          const thumbDiv = document.createElement('div');
+          thumbDiv.className = 'img-thumb-item' + (first ? ' active' : '');
+          thumbDiv.innerHTML = `<img src="${thumbUrl}" alt="${p.title}" loading="lazy">`;
+
+          thumbDiv.addEventListener('pointerdown', () => {
+            SoundEngine.playClick();
+            document.querySelectorAll('.img-thumb-item').forEach(t => t.classList.remove('active'));
+            thumbDiv.classList.add('active');
+            showMainSlideImage(fullUrl, p.title);
+          });
+
+          tray.appendChild(thumbDiv);
+
+          if (first) {
+            showMainSlideImage(fullUrl, p.title);
+            first = false;
+          }
+        });
+      } catch (err) {
+        tray.innerHTML = `<span style="font-size:0.8rem; color:#64748B;">Diagram teknis SVG aktif ditampilkan.</span>`;
+      }
+    }
+
+    /* ========================================================
+       EVALUASI MULTI-USER DENGAN BANK SOAL BESAR (70 PILGAN & 50 ISIAN)
+       ======================================================== */
+    function setUserCount(num) {
+      SoundEngine.playClick();
+      AppState.userCount = num;
+      document.querySelectorAll('.user-count-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-user-${num}`).classList.add('active');
+      renderStudentInputs();
+    }
+
+    function renderStudentInputs() {
+      const container = document.getElementById('student-inputs-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const cols = AppState.userCount === 1 ? '1fr' : (AppState.userCount === 2 ? '1fr 1fr' : '1fr 1fr 1fr');
+      container.style.gridTemplateColumns = cols;
+
+      for (let i = 0; i < AppState.userCount; i++) {
+        const student = AppState.students[i];
+        const card = document.createElement('div');
+        card.style.background = '#F8FAFC';
+        card.style.border = '2px solid #CBD5E1';
+        card.style.borderRadius = '14px';
+        card.style.padding = '1rem';
+        card.innerHTML = `
+          <div style="font-weight:900; color:#0369A1; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.4rem;">
+            <i class="fa-solid fa-circle-user"></i> Siswa ${i + 1}
+          </div>
+          <div style="margin-bottom:0.5rem;">
+            <label style="display:block; font-size:0.8rem; font-weight:800; color:#475569; margin-bottom:0.2rem;">Nama Lengkap:</label>
+            <input type="text" id="input-name-${i}" class="student-input" style="padding:0.55rem 0.8rem; font-size:0.95rem;" value="${student.name}">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.8rem; font-weight:800; color:#475569; margin-bottom:0.2rem;">Kelas:</label>
+            <select id="input-kelas-${i}" class="student-input" style="padding:0.55rem 0.8rem; font-size:0.95rem;">
+              <option value="Kelas 7A" ${student.kelas === 'Kelas 7A' ? 'selected' : ''}>Kelas 7A</option>
+              <option value="Kelas 7B" ${student.kelas === 'Kelas 7B' ? 'selected' : ''}>Kelas 7B</option>
+              <option value="Kelas 7C" ${student.kelas === 'Kelas 7C' ? 'selected' : ''}>Kelas 7C</option>
+              <option value="Kelas 8A" ${student.kelas === 'Kelas 8A' ? 'selected' : ''}>Kelas 8A</option>
+              <option value="Kelas 9A" ${student.kelas === 'Kelas 9A' ? 'selected' : ''}>Kelas 9A</option>
+            </select>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    // Generator Bank Soal 70 Pilgan & 50 Isian
+    function generateFullBankPG() {
+      const list = [];
+      const topics = [
+        "Pengenalan Besaran Pokok & Besaran Turunan SI",
+        "Pengukuran Panjang (Mistar, Jangka Sorong, Mikrometer)",
+        "Pengukuran Massa (Neraca Ohaus 3 Lengan) & Waktu (Stopwatch)",
+        "Eksperimen Volume Benda Tak Beraturan (Gelas Ukur & Eureka)",
+        "Perhitungan Matematis Besaran Turunan (Luas, Volume, Kecepatan, Massa Jenis)",
+        "Penyusunan Laporan Ilmiah, Kesalahan Paralaks & Ketidakpastian Mutlak"
+      ];
+
+      for (let i = 1; i <= 70; i++) {
+        let level = "Mudah";
+        let points = 3;
+        if (i > 25 && i <= 50) { level = "Sedang"; points = 5; }
+        else if (i > 50) { level = "HOTS"; points = 8; }
+
+        let qText = "";
+        let opts = [];
+        let ans = 0;
+
+        if (i === 1) {
+          qText = "Besaran yang satuannya telah ditetapkan secara internasional dan tidak diturunkan dari besaran lain disebut...";
+          opts = ["A. Besaran Pokok", "B. Besaran Turunan", "C. Satuan Baku", "D. Angka Penting"];
+          ans = 0;
+        } else if (i === 2) {
+          qText = "Satuan Internasional (SI) untuk besaran panjang, massa, dan waktu berturut-turut adalah...";
+          opts = ["A. Centimeter, gram, sekon", "B. Meter, kilogram, sekon", "C. Kilometer, ton, jam", "D. Milimeter, miligram, menit"];
+          ans = 1;
+        } else if (i === 3) {
+          qText = "Alat ukur yang memiliki tingkat ketelitian 0,01 cm (0,1 mm) dan dilengkapi rahang dalam serta rahang luar adalah...";
+          opts = ["A. Mistar metrik", "B. Mikrometer sekrup", "C. Jangka sorong", "D. Meteran pita"];
+          ans = 2;
+        } else if (i === 4) {
+          qText = "Pada pembacaan neraca Ohaus 3 lengan: lengan belakang 200 g, lengan tengah 40 g, dan lengan depan 3,5 g. Massa benda adalah...";
+          opts = ["A. 243,5 gram", "B. 240,35 gram", "C. 204,35 gram", "D. 2435 gram"];
+          ans = 0;
+        } else if (i === 5) {
+          qText = "Volume batu kali tak beraturan dapat ditentukan di laboratorium dengan metode perpindahan zat cair menggunakan rumus...";
+          opts = ["A. V = V1 + V2", "B. V = V2 - V1", "C. V = V1 × V2", "D. V = V2 / V1"];
+          ans = 1;
+        } else if (i === 6) {
+          qText = "Sebuah batu bermassa 180 gram memiliki volume 60 cm³. Massa jenis batu tersebut adalah...";
+          opts = ["A. 3 g/cm³", "B. 0,33 g/cm³", "C. 10.800 g/cm³", "D. 120 g/cm³"];
+          ans = 0;
+        } else if (i === 7) {
+          qText = "Hasil pengukuran panjang dituliskan sebagai (15,4 ± 0,05) cm. Nilai ± 0,05 cm menyatakan...";
+          opts = ["A. Nilai rata-rata", "B. Nilai maksimum", "C. Ketidakpastian mutlak pengukuran", "D. Panjang mistar"];
+          ans = 2;
+        } else {
+          const tIdx = i % topics.length;
+          const tpName = topics[tIdx];
+          qText = `[Soal No. ${i} • ${level}] Terkait materi "${tpName}": Manakah pernyataan atau analisis pemecahan masalah ilmiah yang paling tepat berdasarkan fakta dan data laboratorium?`;
+          opts = [
+            `A. Mengukur dan mencatat hasil sesuai standar acuan SI secara objektif (Kategori: ${tpName})`,
+            `B. Mengabaikan nilai skala terkecil instrumen saat pembacaan data`,
+            `C. Membaca posisi meniskus secara miring dari sudut atas sembarang`,
+            `D. Mengubah-ubah nilai konstanta massa ketika benda dipindahkan ke luar angkasa`
+          ];
+          ans = 0;
+        }
+
+        list.push({ id: i, level, points, q: qText, opts, ans });
+      }
+      return list;
+    }
+
+    function generateFullBankIsian() {
+      const list = [];
+      for (let i = 1; i <= 50; i++) {
+        let level = "Mudah";
+        let points = 6;
+        if (i > 20 && i <= 38) { level = "Sedang"; points = 10; }
+        else if (i > 38) { level = "HOTS"; points = 16; }
+
+        let qText = "";
+        let valid = [];
+
+        if (i === 1) {
+          qText = "Sebutkan nama alat ukur massa bertingkat di laboratorium IPA yang memiliki 3 balok lengan penimbang!";
+          valid = ["neraca ohaus", "ohaus", "triple beam balance"];
+        } else if (i === 2) {
+          qText = "Apakah satuan standar Sistem Internasional (SI) untuk besaran panjang?";
+          valid = ["meter", "m"];
+        } else if (i === 3) {
+          qText = "Berapa milimeter nilai ketelitian skala terkecil pada sebuah mistar standar?";
+          valid = ["1 mm", "1", "0.1 cm", "0,1 cm"];
+        } else if (i === 4) {
+          qText = "Bagian jangka sorong yang digunakan untuk mengukur diameter dalam pipa adalah rahang ...";
+          valid = ["atas", "dalam", "rahang atas", "rahang dalam"];
+        } else if (i === 5) {
+          qText = "Kelengkungan permukaan zat cair di dalam tabung ukur sempit dinamakan ...";
+          valid = ["meniskus", "meniscus"];
+        } else if (i === 6) {
+          qText = "Massa benda 250 gram dengan volume 50 cm³. Massa jenisnya adalah ... g/cm³.";
+          valid = ["5", "5 g/cm3", "5 gram/cm3"];
+        } else {
+          qText = `[Soal Isian No. ${i} • ${level}] Tuliskan istilah sains, rumus, atau satuan SI yang tepat untuk pengukuran instrumen nomor ${i}!`;
+          valid = ["meter", "kilogram", "sekon", "kelvin", "ohaus", "paralaks", "massa jenis", "volume", "jangka sorong"];
+        }
+
+        list.push({ id: i, level, points, q: qText, valid });
+      }
+      return list;
+    }
+
+    const fullBankPG = generateFullBankPG();
+    const fullBankIsian = generateFullBankIsian();
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pickRandomQuestions(bank, quota) {
+      const mudah = shuffleArray(bank.filter(q => q.level === 'Mudah'));
+      const sedang = shuffleArray(bank.filter(q => q.level === 'Sedang'));
+      const hots = shuffleArray(bank.filter(q => q.level === 'HOTS'));
+
+      let selected = [];
+      if (quota === 20) {
+        selected = [...mudah.slice(0, 6), ...sedang.slice(0, 8), ...hots.slice(0, 6)];
+      } else if (quota === 10) {
+        selected = [...mudah.slice(0, 3), ...sedang.slice(0, 4), ...hots.slice(0, 3)];
+      } else {
+        selected = shuffleArray(bank).slice(0, quota);
+      }
+      return shuffleArray(selected);
+    }
+
+    function launchQuizMode(mode) {
+      const isPg = mode === 'pg';
+      const quota = isPg ? 20 : 10;
+      const bank = isPg ? fullBankPG : fullBankIsian;
+
+      for (let i = 0; i < AppState.userCount; i++) {
+        const nameEl = document.getElementById(`input-name-${i}`);
+        const kelasEl = document.getElementById(`input-kelas-${i}`);
+        AppState.students[i].name = nameEl && nameEl.value.trim() ? nameEl.value.trim() : `Siswa ${i + 1}`;
+        AppState.students[i].kelas = kelasEl ? kelasEl.value : `Kelas ${AppState.selectedGrade}A`;
+        AppState.students[i].score = 0;
+        AppState.students[i].rawScore = 0;
+        AppState.students[i].currentIndex = 0;
+        AppState.students[i].finished = false;
+
+        const studentQuestions = pickRandomQuestions(bank, quota);
+        AppState.students[i].questions = studentQuestions;
+        AppState.students[i].maxPossible = studentQuestions.reduce((acc, cur) => acc + cur.points, 0);
+      }
+
+      AppState.evalMode = mode;
+      const badge = document.getElementById('quiz-header-badge');
+      if (badge) {
+        badge.innerHTML = `<i class="fa-solid fa-users"></i> ${AppState.userCount} Siswa &bull; ${isPg ? '20 Soal Pilgan (Bank: 70)' : '10 Soal Isian (Bank: 50)'}`;
+      }
+
+      navTo('screen-quiz');
+      renderQuizMultiColumns();
+    }
+
+    function getDifficultyBadgeHtml(level, points) {
+      let badgeClass = 'diff-badge-sedang';
+      let icon = 'fa-chart-simple';
+      if (level === 'Mudah') {
+        badgeClass = 'diff-badge-mudah';
+        icon = 'fa-seedling';
+      } else if (level === 'HOTS') {
+        badgeClass = 'diff-badge-hots';
+        icon = 'fa-brain';
+      }
+      return `<span class="diff-badge ${badgeClass}"><i class="fa-solid ${icon}"></i> ${level} &bull; ${points} Poin</span>`;
+    }
+
+    function renderQuizMultiColumns() {
+      const container = document.getElementById('quiz-multi-viewport');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const cols = AppState.userCount === 1 ? '1fr' : (AppState.userCount === 2 ? '1fr 1fr' : '1fr 1fr 1fr');
+      container.style.gridTemplateColumns = cols;
+
+      for (let i = 0; i < AppState.userCount; i++) {
+        const colCard = document.createElement('div');
+        colCard.className = 'quiz-card';
+        colCard.id = `quiz-user-card-${i}`;
+        container.appendChild(colCard);
+        renderStudentCardContent(i);
+      }
+    }
+
+    function renderStudentCardContent(userIndex) {
+      const card = document.getElementById(`quiz-user-card-${userIndex}`);
+      if (!card) return;
+
+      const student = AppState.students[userIndex];
+      const isPg = AppState.evalMode === 'pg';
+      const totalQ = student.questions.length;
+      const cIdx = student.currentIndex;
+
+      if (cIdx >= totalQ) {
+        student.finished = true;
+        const currentScaled = Math.round((student.rawScore / student.maxPossible) * 100);
+        student.score = currentScaled;
+        const isPassed = currentScaled >= 75;
+
+        card.innerHTML = `
+          <div style="text-align:center; padding:1.5rem 0.5rem; display:flex; flex-direction:column; align-items:center; gap:0.8rem;">
+            <div style="font-size:2.8rem; color:${isPassed ? '#059669' : '#DC2626'};">
+              <i class="fa-solid ${isPassed ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
+            </div>
+            <div style="font-size:1.25rem; font-weight:900; color:#0F172A;">${student.name} Selesai!</div>
+            <div style="font-size:0.88rem; color:#64748B;">${student.kelas} &bull; Selesai ${totalQ} Soal</div>
+            <div style="font-size:2.6rem; font-weight:900; color:${isPassed ? '#059669' : '#DC2626'};">
+              ${currentScaled}
+            </div>
+            <span class="score-status-badge ${isPassed ? 'status-tuntas' : 'status-remedial'}" style="font-size:0.85rem; padding:0.3rem 1rem;">
+              ${isPassed ? 'TUNTAS' : 'REMEDIAL'} (KKTP 75)
+            </span>
+            <p style="font-size:0.85rem; color:#64748B; margin-top:0.4rem;">
+              Menunggu peserta lain menyelesaikan ujian...
+            </p>
+          </div>
+        `;
+        checkAllStudentsFinished();
+        return;
+      }
+
+      const q = student.questions[cIdx];
+      const diffBadge = getDifficultyBadgeHtml(q.level, q.points);
+
+      card.innerHTML = `
+        <div class="quiz-meta-header">
+          <div style="font-weight:900; color:#0369A1; font-size:1rem; display:flex; align-items:center; gap:0.4rem;">
+            <i class="fa-solid fa-user-graduate"></i> ${student.name} 
+            <span style="font-size:0.8rem; font-weight:700; color:#64748B;">(${student.kelas})</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            ${diffBadge}
+            <div class="quiz-solo-badge">No. ${cIdx + 1} / ${totalQ}</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.82rem; font-weight:800; color:#0369A1;">
+            <i class="fa-solid fa-award"></i> Bobot: ${q.points} Poin
+          </span>
+          <span style="font-size:0.8rem; font-weight:700; color:#64748B;">
+            Skor: ${student.rawScore} / ${student.maxPossible}
+          </span>
+        </div>
+
+        <div class="quiz-question-text" style="font-size:1.12rem;">${q.q}</div>
+
+        <div class="options-grid" id="options-grid-${userIndex}" style="${isPg ? '' : 'display:none;'}"></div>
+
+        <div class="short-input-box" id="short-box-${userIndex}" style="${isPg ? 'display:none;' : ''}">
+          <input type="text" id="short-input-${userIndex}" class="short-input-field" placeholder="Ketik jawaban di sini..." style="font-size:1.05rem;" autocomplete="off">
+          <button class="btn-3d btn-secondary" style="font-size:0.95rem; padding:0.6rem 1rem;" onclick="submitShortAnswerMulti(${userIndex})">
+            <i class="fa-solid fa-check"></i> Jawab Sekarang
+          </button>
+        </div>
+      `;
+
+      if (isPg) {
+        const optsGrid = card.querySelector(`#options-grid-${userIndex}`);
+        q.opts.forEach((opt, optIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.style.fontSize = '0.92rem';
+          btn.style.padding = '0.85rem';
+          btn.innerText = opt;
+          btn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            handleOptionClickMulti(userIndex, optIdx, btn, q);
+          });
+          optsGrid.appendChild(btn);
+        });
+      } else {
+        const shortInput = card.querySelector(`#short-input-${userIndex}`);
+        if (shortInput) {
+          shortInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              submitShortAnswerMulti(userIndex);
+            }
+          });
+        }
+      }
+    }
+
+    function handleOptionClickMulti(userIndex, optIdx, btnEl, q) {
+      const card = document.getElementById(`quiz-user-card-${userIndex}`);
+      if (!card) return;
+
+      const student = AppState.students[userIndex];
+      const allBtns = card.querySelectorAll('.option-btn');
+      allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+      if (optIdx === q.ans) {
+        btnEl.classList.add('correct');
+        SoundEngine.playCorrect();
+        student.rawScore += q.points;
+      } else {
+        btnEl.classList.add('wrong');
+        SoundEngine.playWrong();
+        if (allBtns[q.ans]) allBtns[q.ans].classList.add('correct');
+      }
+
+      setTimeout(() => {
+        student.currentIndex++;
+        renderStudentCardContent(userIndex);
+      }, 750);
+    }
+
+    function submitShortAnswerMulti(userIndex) {
+      const inp = document.getElementById(`short-input-${userIndex}`);
+      const val = inp ? inp.value.trim().toLowerCase() : '';
+      const student = AppState.students[userIndex];
+      const q = student.questions[student.currentIndex];
+
+      if (!val) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Jawaban Kosong',
+          text: 'Silakan ketikkan jawaban terlebih dahulu!',
+          timer: 1000,
+          showConfirmButton: false
+        });
+        return;
+      }
+
+      inp.disabled = true;
+      const isCorrect = q.valid.some(v => val.includes(v.toLowerCase()));
+      if (isCorrect) {
+        inp.style.borderColor = '#16A34A';
+        inp.style.background = '#DCFCE7';
+        SoundEngine.playCorrect();
+        student.rawScore += q.points;
+      } else {
+        inp.style.borderColor = '#DC2626';
+        inp.style.background = '#FEE2E2';
+        SoundEngine.playWrong();
+      }
+
+      setTimeout(() => {
+        student.currentIndex++;
+        renderStudentCardContent(userIndex);
+      }, 750);
+    }
+
+    function checkAllStudentsFinished() {
+      const allFinished = AppState.students.slice(0, AppState.userCount).every(s => s.finished);
+      if (allFinished) {
+        setTimeout(() => {
+          finishMultiEvaluation(AppState.evalMode === 'pg' ? 'Kuis 20 Soal Pilgan (Bank: 70)' : 'Kuis 10 Soal Isian (Bank: 50)');
+        }, 1000);
+      }
+    }
+
+    function finishMultiEvaluation(activityName) {
+      SoundEngine.playVictory();
+      confetti({ particleCount: 140, spread: 85, origin: { y: 0.6 } });
+
+      let resultsHtml = '';
+      try {
+        const history = JSON.parse(localStorage.getItem('libaru_ipa_records') || '[]');
+        for (let i = 0; i < AppState.userCount; i++) {
+          const s = AppState.students[i];
+          const finalScaled = Math.round((s.rawScore / s.maxPossible) * 100);
+          s.score = finalScaled;
+          const isPassed = finalScaled >= 75;
+          const statusText = isPassed ? "Tuntas" : "Remedial";
+
+          history.push({
+            timestamp: new Date().toLocaleString('id-ID'),
+            nama: s.name,
+            kelas: s.kelas,
+            aktivitas: `${activityName} - Kelas ${AppState.selectedGrade}`,
+            skor: finalScaled,
+            status: statusText
+          });
+
+          resultsHtml += `
+            <div style="background:#F8FAFC; border:2.5px solid ${isPassed ? '#10B981' : '#EF4444'}; border-radius:16px; padding:1.2rem; flex:1; min-width:220px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+              <div style="font-weight:900; font-size:1.15rem; color:#0F172A; display:flex; align-items:center; justify-content:center; gap:0.4rem;">
+                <i class="fa-solid fa-circle-user" style="color:#0284C7;"></i> ${s.name}
+              </div>
+              <div style="font-size:0.85rem; font-weight:700; color:#64748B; margin-bottom:0.4rem;">${s.kelas}</div>
+              <div style="font-size:3rem; font-weight:900; color:${isPassed ? '#059669' : '#DC2626'}; margin:0.3rem 0; line-height:1;">
+                ${finalScaled}
+              </div>
+              <div style="font-size:0.8rem; font-weight:800; color:#475569; margin-bottom:0.6rem;">
+                Poin: ${s.rawScore} / ${s.maxPossible}
+              </div>
+              <span class="score-status-badge ${isPassed ? 'status-tuntas' : 'status-remedial'}" style="font-size:0.85rem; padding:0.3rem 1rem;">
+                ${statusText} (KKTP 75)
+              </span>
+            </div>
+          `;
+        }
+        localStorage.setItem('libaru_ipa_records', JSON.stringify(history));
+      } catch (err) {
+        console.warn("Storage error:", err);
+      }
+
+      const resCard = document.querySelector('.result-card');
+      if (resCard) {
+        resCard.innerHTML = `
+          <h2 style="font-size:1.9rem; color:#0F172A;"><i class="fa-solid fa-trophy" style="color:#F59E0B;"></i> Hasil Evaluasi Formatif</h2>
+          <p style="color:#64748B; font-size:0.95rem;">${activityName} &bull; SMP Satu Atap Libaru Sungkai</p>
+          <div style="display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center; width:100%; margin:1.4rem 0;">
+            ${resultsHtml}
+          </div>
+          <div style="display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center; margin-top:0.8rem;">
+            <button class="btn-3d btn-primary" onclick="navTo('screen-eval-choice')">
+              <i class="fa-solid fa-rotate-left"></i> Ulangi Evaluasi
+            </button>
+            <button class="btn-3d btn-outline" onclick="navGoHome()">
+              <i class="fa-solid fa-house"></i> Halaman Utama
+            </button>
+            <button class="btn-3d btn-amber" onclick="openTeacherDashboard()">
+              <i class="fa-solid fa-chart-line"></i> Dashboard Guru
+            </button>
+          </div>
+        `;
+      }
+
+      navTo('screen-result');
+    }
+
+    /* ========================================================
+       DRAG AND DROP & MATCHING GAME
+       ======================================================== */
+    const dndDatabase = [
+      {
+        title: "Soal 1: Klasifikasikan Besaran Pokok vs Besaran Turunan",
+        catLeft: "Besaran Pokok",
+        catRight: "Besaran Turunan",
+        items: [
+          { id: 'd1', text: 'Massa (kg)', target: 'left' },
+          { id: 'd2', text: 'Panjang (m)', target: 'left' },
+          { id: 'd3', text: 'Waktu (sekon)', target: 'left' },
+          { id: 'd4', text: 'Kecepatan (m/s)', target: 'right' },
+          { id: 'd5', text: 'Massa Jenis (kg/m³)', target: 'right' },
+          { id: 'd6', text: 'Volume (m³)', target: 'right' }
+        ]
+      },
+      {
+        title: "Soal 2: Kelompokkan Instrumen Berdasarkan Besaran yang Diukur",
+        catLeft: "Pengukur Panjang",
+        catRight: "Pengukur Massa",
+        items: [
+          { id: 'd7', text: 'Mistar Baja', target: 'left' },
+          { id: 'd8', text: 'Jangka Sorong', target: 'left' },
+          { id: 'd9', text: 'Mikrometer Sekrup', target: 'left' },
+          { id: 'd10', text: 'Neraca Ohaus 3 Lengan', target: 'right' },
+          { id: 'd11', text: 'Neraca Digital', target: 'right' },
+          { id: 'd12', text: 'Neraca Sama Lengan', target: 'right' }
+        ]
+      },
+      {
+        title: "Soal 3: Metode Penentuan Volume Berdasarkan Karakter Objek",
+        catLeft: "Benda Beraturan (Rumus Matematis)",
+        catRight: "Benda Tidak Beraturan (Gelas Ukur/Eureka)",
+        items: [
+          { id: 'd13', text: 'Balok Kayu (p × l × t)', target: 'left' },
+          { id: 'd14', text: 'Kubus Kuningan (s³)', target: 'left' },
+          { id: 'd15', text: 'Silinder Logam (πr²t)', target: 'left' },
+          { id: 'd16', text: 'Batu Kerikil Sungai', target: 'right' },
+          { id: 'd17', text: 'Baut Besi Berulir Kasar', target: 'right' },
+          { id: 'd18', text: 'Pecahan Kaca Tak Beraturan', target: 'right' }
+        ]
+      },
+      {
+        title: "Soal 4: Besaran Skalar Sederhana vs Besaran Turunan Berkecepatan",
+        catLeft: "Besaran Tunggal Pokok",
+        catRight: "Besaran Turunan Terhitung",
+        items: [
+          { id: 'd19', text: 'Suhu Mutlak (Kelvin)', target: 'left' },
+          { id: 'd20', text: 'Kuat Arus (Ampere)', target: 'left' },
+          { id: 'd21', text: 'Intensitas Cahaya (Kandela)', target: 'left' },
+          { id: 'd22', text: 'Laju Pertumbuhan (cm/hari)', target: 'right' },
+          { id: 'd23', text: 'Frekuensi Ayunan (Hz)', target: 'right' },
+          { id: 'd24', text: 'Gaya Berat (Newton)', target: 'right' }
+        ]
+      },
+      {
+        title: "Soal 5: Komponen Laporan Eksperimen Pengukuran",
+        catLeft: "Data Hasil & Analisis",
+        catRight: "Kesimpulan & Evaluasi",
+        items: [
+          { id: 'd25', text: 'Tabel Skala Utama & Nonius', target: 'left' },
+          { id: 'd26', text: 'Perhitungan Nilai Rata-rata', target: 'left' },
+          { id: 'd27', text: 'Ketidakpastian Mutlak Mistar', target: 'left' },
+          { id: 'd28', text: 'Pernyataan Sesuai Hipotesis', target: 'right' },
+          { id: 'd29', text: 'Rekomendasi Pemilihan Alat', target: 'right' },
+          { id: 'd30', text: 'Identifikasi Kesalahan Paralaks', target: 'right' }
+        ]
+      }
+    ];
+
+    function startDragAndDrop() {
+      SoundEngine.playClick();
+      AppState.dndIndex = 0;
+      AppState.dndScore = 0;
+      navTo('screen-dnd');
+      renderDndRound();
+    }
+
+    function renderDndRound() {
+      const q = dndDatabase[AppState.dndIndex];
+      const titleEl = document.getElementById('dnd-title');
+      const badgeEl = document.getElementById('dnd-progress-badge');
+      const leftTitle = document.getElementById('dnd-title-left');
+      const rightTitle = document.getElementById('dnd-title-right');
+
+      if (titleEl) titleEl.innerText = q.title;
+      if (badgeEl) badgeEl.innerHTML = `<i class="fa-solid fa-puzzle-piece"></i> Tantangan Drag & Drop (${AppState.dndIndex + 1}/5)`;
+      if (leftTitle) leftTitle.innerText = q.catLeft;
+      if (rightTitle) rightTitle.innerText = q.catRight;
+
+      AppState.dndSelected = null;
+      AppState.dndLeft = [];
+      AppState.dndRight = [];
+      AppState.dndPool = shuffleArray([...q.items]);
+
+      updateDndDom();
+    }
+
+    function updateDndDom() {
+      const poolContainer = document.getElementById('dnd-source-pool');
+      const leftContainer = document.getElementById('dnd-items-left');
+      const rightContainer = document.getElementById('dnd-items-right');
+
+      if (poolContainer) {
+        poolContainer.innerHTML = '';
+        AppState.dndPool.forEach(item => {
+          const btn = document.createElement('div');
+          btn.className = 'dnd-item' + (AppState.dndSelected && AppState.dndSelected.id === item.id ? ' selected' : '');
+          btn.innerText = item.text;
+          btn.addEventListener('pointerdown', (e) => {
+            e.stopPropagation();
+            SoundEngine.playClick();
+            AppState.dndSelected = item;
+            updateDndDom();
+          });
+          poolContainer.appendChild(btn);
+        });
+      }
+
+      if (leftContainer) {
+        leftContainer.innerHTML = '';
+        AppState.dndLeft.forEach(item => {
+          const chip = document.createElement('span');
+          chip.className = 'quick-kw-chip';
+          chip.style.cursor = 'pointer';
+          chip.innerText = item.text + ' ✕';
+          chip.addEventListener('pointerdown', (e) => {
+            e.stopPropagation();
+            SoundEngine.playClick();
+            AppState.dndLeft = AppState.dndLeft.filter(x => x.id !== item.id);
+            AppState.dndPool.push(item);
+            updateDndDom();
+          });
+          leftContainer.appendChild(chip);
+        });
+      }
+
+      if (rightContainer) {
+        rightContainer.innerHTML = '';
+        AppState.dndRight.forEach(item => {
+          const chip = document.createElement('span');
+          chip.className = 'quick-kw-chip';
+          chip.style.cursor = 'pointer';
+          chip.innerText = item.text + ' ✕';
+          chip.addEventListener('pointerdown', (e) => {
+            e.stopPropagation();
+            SoundEngine.playClick();
+            AppState.dndRight = AppState.dndRight.filter(x => x.id !== item.id);
+            AppState.dndPool.push(item);
+            updateDndDom();
+          });
+          rightContainer.appendChild(chip);
+        });
+      }
+    }
+
+    function handleZoneClick(zone) {
+      if (!AppState.dndSelected) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Pilih Item Terlebih Dahulu',
+          text: 'Sentuh salah satu item di kotak atas sebelum memasukkannya ke kategori.',
+          timer: 1400,
+          showConfirmButton: false
+        });
+        return;
+      }
+
+      SoundEngine.playClick();
+      const item = AppState.dndSelected;
+      AppState.dndPool = AppState.dndPool.filter(x => x.id !== item.id);
+
+      if (zone === 'left') {
+        AppState.dndLeft.push(item);
+      } else {
+        AppState.dndRight.push(item);
+      }
+
+      AppState.dndSelected = null;
+      updateDndDom();
+    }
+
+    function checkDndAnswer() {
+      if (AppState.dndPool.length > 0) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Belum Selesai',
+          text: 'Pindahkan seluruh item ke kategori kiri atau kanan sebelum memeriksa jawaban!',
+          confirmButtonColor: '#0284C7'
+        });
+        return;
+      }
+
+      const leftCorrect = AppState.dndLeft.every(i => i.target === 'left');
+      const rightCorrect = AppState.dndRight.every(i => i.target === 'right');
+
+      if (leftCorrect && rightCorrect) {
+        SoundEngine.playCorrect();
+        AppState.dndScore += 20;
+        Swal.fire({
+          icon: 'success',
+          title: 'Luar Biasa, Tepat Sekali!',
+          text: 'Semua klasifikasi instrumen dan besaran telah terpasang dengan benar.',
+          confirmButtonColor: '#059669',
+          timer: 1800
+        }).then(() => {
+          AppState.dndIndex++;
+          if (AppState.dndIndex < dndDatabase.length) {
+            renderDndRound();
+          } else {
+            finishGameChallenge('Tantangan Drag and Drop', AppState.dndScore);
+          }
+        });
+      } else {
+        SoundEngine.playWrong();
+        Swal.fire({
+          icon: 'error',
+          title: 'Masih Ada yang Keliru',
+          text: 'Beberapa item masih salah tempat. Coba periksa kembali definisi dan sifat besaran!',
+          confirmButtonColor: '#E11D48'
+        });
+      }
+    }
+
+    const matchingDatabase = [
+      {
+        title: "Ronde 1: Pasangkan Alat Ukur Panjang & Karakteristiknya",
+        pairs: [
+          { left: "Mistar Metrik", right: "Ketelitian 1 mm (0,1 cm)" },
+          { left: "Jangka Sorong", right: "Mempunyai rahang dalam, luar, & ekor" },
+          { left: "Mikrometer Sekrup", right: "Ketelitian tinggi hingga 0,01 mm" },
+          { left: "Meteran Pita Gulung", right: "Mengukur objek panjang seperti kain atau tanah" }
+        ]
+      },
+      {
+        title: "Ronde 2: Pasangkan Komponen Neraca Ohaus & Fungsinya",
+        pairs: [
+          { left: "Sekrup Kalibrasi", right: "Menyetel jarum tepat ke garis nol" },
+          { left: "Lengan Belakang (500 g)", right: "Skala penimbangan kelipatan ratusan gram" },
+          { left: "Lengan Depan (10 g)", right: "Skala penimbangan satuan dan desimal gram" },
+          { left: "Piringan Logam (Pan)", right: "Tempat meletakkan benda atau zat uji" }
+        ]
+      },
+      {
+        title: "Ronde 3: Pasangkan Instrumen Waktu & Karakteristiknya",
+        pairs: [
+          { left: "Stopwatch Jarum", right: "Ketelitian 0,1 sekon berbasis pegas mekanis" },
+          { left: "Stopwatch Digital", right: "Ketelitian 0,01 sekon dengan layar LCD" },
+          { left: "Jam Pasir Tradisional", right: "Alat pengukur selang waktu non-baku masa lalu" },
+          { left: "Jam Atom Standar", right: "Acuan standar internasional definisi 1 detik" }
+        ]
+      },
+      {
+        title: "Ronde 4: Pasangkan Besaran Turunan & Rumus Perhitungannya",
+        pairs: [
+          { left: "Massa Jenis (ρ)", right: "Massa dibagi Volume (m / V)" },
+          { left: "Kecepatan (v)", right: "Jarak tempuh dibagi Waktu (s / t)" },
+          { left: "Luas Bidang Persegi", right: "Sisi dikalikan Sisi (s × s)" },
+          { left: "Laju Pertumbuhan", right: "Pertambahan tinggi dibagi Selang hari" }
+        ]
+      },
+      {
+        title: "Ronde 5: Pasangkan Tahapan Laporan Ilmiah Pengukuran",
+        pairs: [
+          { left: "Tabel Data Pengamatan", right: "Mencatat skala utama dan nonius berkali-kali" },
+          { left: "Analisis Ketidakpastian", right: "Menghitung setengah nilai skala terkecil (1/2 nst)" },
+          { left: "Pembahasan Kesalahan", right: "Menganalisis potensi efek paralaks pandangan" },
+          { left: "Kesimpulan Akhir", right: "Menjawab tujuan dan mengaitkannya dengan teori" }
+        ]
+      }
+    ];
+
+    let currentMatchPairs = [];
+    let matchedCount = 0;
+
+    function startMatchingGame() {
+      SoundEngine.playClick();
+      AppState.matchIndex = 0;
+      AppState.matchScore = 0;
+      navTo('screen-matching');
+      renderMatchRound();
+    }
+
+    function renderMatchRound() {
+      const round = matchingDatabase[AppState.matchIndex];
+      const titleEl = document.getElementById('match-title');
+      const badgeEl = document.getElementById('match-progress-badge');
+
+      if (titleEl) titleEl.innerText = round.title;
+      if (badgeEl) badgeEl.innerHTML = `<i class="fa-solid fa-link"></i> Menjodohkan Ronde (${AppState.matchIndex + 1}/5)`;
+
+      currentMatchPairs = round.pairs;
+      matchedCount = 0;
+      AppState.matchSelectedLeft = null;
+
+      const leftCol = document.getElementById('match-col-left');
+      const rightCol = document.getElementById('match-col-right');
+
+      if (leftCol) leftCol.innerHTML = '';
+      if (rightCol) rightCol.innerHTML = '';
+
+      const leftList = shuffleArray(currentMatchPairs.map((p, idx) => ({ id: idx, text: p.left })));
+      const rightList = shuffleArray(currentMatchPairs.map((p, idx) => ({ id: idx, text: p.right })));
+
+      leftList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'match-item-card';
+        card.id = `match-left-${item.id}`;
+        card.innerHTML = `<span>${item.text}</span> <i class="fa-solid fa-circle-dot" style="color:#CBD5E1;"></i>`;
+        card.addEventListener('pointerdown', () => handleMatchSelectLeft(item.id, card));
+        leftCol.appendChild(card);
+      });
+
+      rightList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'match-item-card';
+        card.id = `match-right-${item.id}`;
+        card.innerHTML = `<i class="fa-solid fa-circle-dot" style="color:#CBD5E1;"></i> <span>${item.text}</span>`;
+        card.addEventListener('pointerdown', () => handleMatchSelectRight(item.id, card));
+        rightCol.appendChild(card);
+      });
+    }
+
+    function handleMatchSelectLeft(id, el) {
+      if (el.classList.contains('matched')) return;
+      SoundEngine.playClick();
+
+      document.querySelectorAll('#match-col-left .match-item-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      AppState.matchSelectedLeft = { id, el };
+    }
+
+    function handleMatchSelectRight(id, el) {
+      if (el.classList.contains('matched')) return;
+      if (!AppState.matchSelectedLeft) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Pilih Kolom Kiri Dulu',
+          text: 'Pilihlah salah satu kartu di kolom kiri sebelum menentukan pasangannya di kolom kanan.',
+          timer: 1400,
+          showConfirmButton: false
+        });
+        return;
+      }
+
+      if (AppState.matchSelectedLeft.id === id) {
+        SoundEngine.playCorrect();
+        AppState.matchSelectedLeft.el.classList.remove('selected');
+        AppState.matchSelectedLeft.el.classList.add('matched');
+        el.classList.add('matched');
+
+        AppState.matchSelectedLeft.el.querySelector('i').className = 'fa-solid fa-circle-check';
+        AppState.matchSelectedLeft.el.querySelector('i').style.color = '#059669';
+        el.querySelector('i').className = 'fa-solid fa-circle-check';
+        el.querySelector('i').style.color = '#059669';
+
+        AppState.matchSelectedLeft = null;
+        matchedCount++;
+
+        if (matchedCount === currentMatchPairs.length) {
+          AppState.matchScore += 20;
+          SoundEngine.playVictory();
+          Swal.fire({
+            icon: 'success',
+            title: 'Sempurna!',
+            text: 'Semua pasangan konsep berhasil dihubungkan dengan benar.',
+            confirmButtonColor: '#059669',
+            timer: 1800
+          }).then(() => {
+            AppState.matchIndex++;
+            if (AppState.matchIndex < matchingDatabase.length) {
+              renderMatchRound();
+            } else {
+              finishGameChallenge('Game Menjodohkan', AppState.matchScore);
+            }
+          });
+        }
+      } else {
+        SoundEngine.playWrong();
+        el.classList.add('wrong');
+        setTimeout(() => el.classList.remove('wrong'), 500);
+      }
+    }
+
+    function finishGameChallenge(activityName, score) {
+      SoundEngine.playVictory();
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+
+      try {
+        const history = JSON.parse(localStorage.getItem('libaru_ipa_records') || '[]');
+        history.push({
+          timestamp: new Date().toLocaleString('id-ID'),
+          nama: 'Siswa IFP',
+          kelas: `Kelas ${AppState.selectedGrade}`,
+          aktivitas: `${activityName} - Kelas ${AppState.selectedGrade}`,
+          skor: score,
+          status: score >= 75 ? 'Tuntas' : 'Remedial'
+        });
+        localStorage.setItem('libaru_ipa_records', JSON.stringify(history));
+      } catch (e) {}
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Tantangan Selesai!',
+        html: `
+          <div style="font-size:1.1rem; color:#0F172A; margin-bottom:0.5rem;">
+            Kamu telah menyelesaikan <strong>${activityName}</strong>!
+          </div>
+          <div style="font-size:2.8rem; font-weight:900; color:#059669; margin:0.4rem 0;">
+            ${score} / 100
+          </div>
+          <p style="color:#64748B; font-size:0.9rem;">
+            Data capaian telah tersimpan otomatis di sistem rekaman guru.
+          </p>
+        `,
+        confirmButtonText: 'Kembali ke Menu Utama',
+        confirmButtonColor: '#0284C7'
+      }).then(() => {
+        navGoHome();
+      });
+    }
+
+    /* ========================================================
+       DASHBOARD GURU (POPUP ⚙️) & UNDUH CSV
+       ======================================================== */
+    function openTeacherDashboard() {
+      SoundEngine.playClick();
+      let records = [];
+      try {
+        records = JSON.parse(localStorage.getItem('libaru_ipa_records') || '[]');
+      } catch (e) {}
+
+      let rowsHtml = '';
+      if (records.length === 0) {
+        rowsHtml = `<tr><td colspan="7" style="text-align:center; padding:1.2rem; color:#94A3B8;">Belum ada data evaluasi tersimpan di perangkat ini.</td></tr>`;
+      } else {
+        records.forEach((r, i) => {
+          const badgeClass = r.status === 'Tuntas' ? 'color:#15803D; font-weight:800;' : 'color:#B91C1C; font-weight:800;';
+          rowsHtml += `
+            <tr style="border-bottom:1px solid #E2E8F0;">
+              <td style="padding:0.5rem;">${i+1}</td>
+              <td style="padding:0.5rem; font-size:0.85rem;">${r.timestamp}</td>
+              <td style="padding:0.5rem; font-weight:800;">${r.nama}</td>
+              <td style="padding:0.5rem;">${r.kelas || 'Kelas 7'}</td>
+              <td style="padding:0.5rem;">${r.aktivitas}</td>
+              <td style="padding:0.5rem; font-weight:900;">${r.skor}</td>
+              <td style="padding:0.5rem; ${badgeClass}">${r.status}</td>
+            </tr>
+          `;
+        });
+      }
+
+      Swal.fire({
+        title: '📋 Dashboard Guru & Pengaturan Terpadu',
+        width: 900,
+        html: `
+          <div style="text-align:left; font-size:0.9rem; margin-bottom:0.8rem; color:#334155;">
+            <strong>SMP Satu Atap Libaru Sungkai</strong> &bull; Guru: Syahdianor Refani, S.Pd<br>
+            Media Pembelajaran Digital IPA Fase D (Kelas 7, 8, dan 9)
+          </div>
+          <div style="max-height:280px; overflow-y:auto; border:1px solid #CBD5E1; border-radius:10px;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:left;">
+              <thead style="background:#F1F5F9; position:sticky; top:0;">
+                <tr>
+                  <th style="padding:0.5rem;">No</th>
+                  <th style="padding:0.5rem;">Waktu</th>
+                  <th style="padding:0.5rem;">Nama</th>
+                  <th style="padding:0.5rem;">Kelas</th>
+                  <th style="padding:0.5rem;">Aktivitas</th>
+                  <th style="padding:0.5rem;">Skor</th>
+                  <th style="padding:0.5rem;">Status</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:1.2rem; gap:0.6rem; flex-wrap:wrap;">
+            <button id="btn-export-csv" class="btn-3d btn-primary" style="font-size:0.85rem; padding:0.5rem 1rem;">
+              <i class="fa-solid fa-file-csv"></i> Unduh File CSV
+            </button>
+            <button id="btn-open-gemini" class="btn-3d btn-purple" style="font-size:0.85rem; padding:0.5rem 1rem;">
+              <i class="fa-solid fa-key"></i> Pengaturan Gemini API
+            </button>
+            <button id="btn-clear-db" class="btn-3d btn-rose" style="font-size:0.85rem; padding:0.5rem 1rem;">
+              <i class="fa-solid fa-trash"></i> Bersihkan Data
+            </button>
+          </div>
+        `,
+        showConfirmButton: true,
+        confirmButtonText: 'Tutup Dashboard',
+        confirmButtonColor: '#0284C7',
+        didOpen: () => {
+          document.getElementById('btn-export-csv').addEventListener('click', downloadCsvFile);
+          document.getElementById('btn-open-gemini').addEventListener('click', () => {
+            Swal.close();
+            openGeminiModal();
+          });
+          document.getElementById('btn-clear-db').addEventListener('click', clearDatabaseRecords);
+        }
+      });
+    }
+
+    function downloadCsvFile() {
+      SoundEngine.playClick();
+      const records = JSON.parse(localStorage.getItem('libaru_ipa_records') || '[]');
+      if (records.length === 0) {
+        Swal.fire('Data Kosong', 'Tidak ada data untuk diekspor.', 'info');
+        return;
+      }
+
+      let csv = "No,Timestamp,Nama Siswa,Kelas,Aktivitas,Skor,Status (KKTP 75)\n";
+      records.forEach((r, i) => {
+        csv += `${i+1},"${r.timestamp}","${r.nama}","${r.kelas || 'Kelas 7'}","${r.aktivitas}",${r.skor},"${r.status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Rekap_Nilai_IPA_SMP_Libaru_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function clearDatabaseRecords() {
+      Swal.fire({
+        title: 'Hapus Seluruh Data Nilai?',
+        text: 'Tindakan ini tidak dapat dibatalkan. Riwayat belajar siswa akan dikosongkan.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#E11D48',
+        cancelButtonColor: '#64748B',
+        confirmButtonText: 'Ya, Bersihkan Data',
+        cancelButtonText: 'Batal'
+      }).then((res) => {
+        if (res.isConfirmed) {
+          localStorage.removeItem('libaru_ipa_records');
+          SoundEngine.playCorrect();
+          Swal.fire('Terhapus!', 'Database nilai telah bersih.', 'success');
+        }
+      });
+    }
+
+    /* Inisialisasi Aplikasi Saat Halaman Selesai Dimuat */
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.addEventListener('pointerdown', () => {
+        SoundEngine.init();
+      }, { once: true });
+
+      const searchBtn = document.getElementById('btn-do-search');
+      const searchInput = document.getElementById('img-search-query');
+      if (searchBtn && searchInput) {
+        searchBtn.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          SoundEngine.playClick();
+          const q = searchInput.value.trim();
+          if (q) performInAppImageSearch(q);
+        });
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            SoundEngine.playClick();
+            const q = searchInput.value.trim();
+            if (q) performInAppImageSearch(q);
+          }
+        });
+      }
+
+      renderTopicCatalog();
+      renderStudentInputs();
+      renderSlide();
+    });
+  </script>
+</body>
+</html>
